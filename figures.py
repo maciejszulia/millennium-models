@@ -51,16 +51,21 @@ def comma_ticks(axis, nd=2):
     axis.set_major_formatter(lambda v, _: pl(v, nd))
 
 
-def frame(title, subtitle, footer, ncols=1, width_ratios=None, sharey=False):
+def frame(title, subtitle, footer, ncols=1, width_ratios=None, sharey=False, height=5.4):
     """Figure whose title is the finding, subtitle is what is drawn, footer is the source."""
-    fig, axes = plt.subplots(1, ncols, figsize=(9.6, 5.4), sharey=sharey,
+    fig, axes = plt.subplots(1, ncols, figsize=(9.6, height), sharey=sharey,
                              gridspec_kw={"width_ratios": width_ratios})
+    unit = 5.4 / height  # text sizes are fixed in points, so the margins shrink as the figure grows
+
+    def up(t):  # a position given for the default height, measured from the top edge
+        return 1 - (1 - t) * unit
+
     sub_y = 0.962 - 0.052 * (title.count("\n") + 1)
     top = sub_y - 0.046 * (subtitle.count("\n") + 1) - 0.07
-    fig.subplots_adjust(left=0.075, right=0.965, top=top, bottom=0.175, wspace=0.3)
-    fig.text(0.03, 0.962, title, fontsize=12.5, fontweight="bold", va="top", linespacing=1.25)
-    fig.text(0.03, sub_y - 0.008, subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.35)
-    fig.text(0.03, 0.028, footer, fontsize=8, color=MUTED, va="bottom", linespacing=1.35)
+    fig.subplots_adjust(left=0.075, right=0.965, top=up(top), bottom=0.175 * unit, wspace=0.3)
+    fig.text(0.03, up(0.962), title, fontsize=12.5, fontweight="bold", va="top", linespacing=1.25)
+    fig.text(0.03, up(sub_y - 0.008), subtitle, fontsize=9.5, color=INK2, va="top", linespacing=1.35)
+    fig.text(0.03, 0.028 * unit, footer, fontsize=8, color=MUTED, va="bottom", linespacing=1.35)
     return fig, list(np.atleast_1d(axes))
 
 
@@ -211,8 +216,8 @@ def hermite_functions(nmax, x):
 
 
 def figure_yang_mills():
-    m = 30
-    _, levels = mc.check_x2y2(sizes=(20, m))
+    m = 20
+    _, levels, bound = mc.check_x2y2()
     e0, e1, e2 = sorted(set(round(e, 5) for e in levels))[:3]
     coefficients = np.linalg.eigh(mc.x2y2_hamiltonian(m, 0, 0))[1][:, 0].reshape(m, m)
     grid = np.linspace(-5, 5, 401)
@@ -227,6 +232,7 @@ def figure_yang_mills():
         "Lewy panel: sprzężenie g w rachunku 1 pętli. Środkowy panel: gęstość stanu podstawowego "
         "hamiltonianu −Δ + x²y²\ni kontur potencjału na poziomie E₀. Prawy panel: poziomy energii.",
         f"Źródło: models_check.py, sprawdzian 5, baza {m} × {m}. Gęstość w jednostkach maksimum. "
+        "Granica dolna: H ≥ (−Δ + |x| + |y|)/2.\n"
         f"Lewy panel: przykład dla grupy SU({colours}) i sprzężenia g²(ℓ₀) = 1.",
         ncols=3, width_ratios=[1.0, 1.2, 0.72],
     )
@@ -250,6 +256,8 @@ def figure_yang_mills():
     for value, text in ((e0, f"E₀ = {pl(e0, 3)}"), (e1, f"E₁ = {pl(e1, 3)} (2 stany)"), (e2, f"E₂ = {pl(e2, 3)}")):
         right.plot([0.05, 0.62], [value, value], color=INK, lw=LINE)
         right.text(0.05, value + 0.07, text, fontsize=8.5, color=INK2, va="bottom")
+    right.plot([0.05, 0.62], [bound, bound], color=MUTED, lw=1)
+    right.text(0.05, bound - 0.07, f"granica dolna {pl(bound, 3)}", fontsize=8.5, color=INK2, va="top")
     right.plot([0.8, 0.8], [e0, e1], color=INK2, lw=1.1)
     for value in (e0, e1):
         right.plot([0.76, 0.84], [value, value], color=INK2, lw=1.1)
@@ -329,8 +337,95 @@ def figure_p_vs_np():
     save(fig, "p-vs-np-queries-and-gates.png")
 
 
+def figure_counterexample_thread():
+    ratios = mc.lagarias_ratios()
+    nmax, worst_n, worst_ratio = mc.check_lagarias(ratios)
+    edges = np.unique(np.round(np.logspace(np.log10(2), np.log10(nmax + 1), 61)).astype(int))
+    centre, top, median = [], [], []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        part = ratios[lo - 1 : hi - 1]  # n from lo to hi - 1
+        centre.append(np.sqrt(lo * (hi - 1)))
+        top.append(part.max())
+        median.append(np.median(part))
+    fig, (ax,) = frame(
+        "Wątek kontrprzykładów dla hipotezy Riemanna nie zatrzymał się:\n"
+        f"iloraz nie przekracza {pl(worst_ratio, 4)} dla n od 2 do {thousands(nmax)}",
+        r"Iloraz σ(n) / ($H_n$ + exp($H_n$) × ln $H_n$) w " + f"{len(top)} przedziałach liczby n. "
+        "Hipoteza Riemanna jest równoważna zdaniu:\nżaden iloraz nie przekracza 1.",
+        "Źródło: models_check.py, sprawdzian 8. Kryterium: Lagarias 2002. σ(n) oznacza sumę dzielników liczby n, "
+        r"$H_n$ oznacza sumę 1 + 1/2 + … + 1/n.",
+    )
+    ax.axhline(1, color=INK2, lw=1.3, zorder=2)
+    ax.text(2.2, 1.012, "granica: iloraz większy niż 1 obala hipotezę", fontsize=8.5, color=INK2, va="bottom")
+    ax.plot(centre, median, color=MUTED, label="mediana ilorazu w przedziale", zorder=2)
+    ax.plot(centre, top, color=BLUE, label="największy iloraz w przedziale", zorder=3)
+    ax.plot(worst_n, worst_ratio, "o", color=BLUE, markeredgecolor=SURFACE, markeredgewidth=RING, markersize=8, zorder=4,
+            label=f"największy iloraz: {pl(worst_ratio, 4)} dla n = {worst_n}")
+    ax.set_xscale("log")
+    ax.set(xlim=(2, nmax * 1.6), ylim=(0, 1.1), xlabel="liczba n (skala logarytmiczna)", ylabel="iloraz")
+    ax.set_xticks([10, 100, 1000, 10_000, 100_000, 1_000_000],
+                  ["10", "100", "1 000", "10 000", "100 000", "1 000 000"])
+    comma_ticks(ax.yaxis, 1)
+    ax.legend(loc="lower left")
+    save(fig, "riemann-counterexample-thread.png")
+
+
+def box(ax, x, y, text, color, width, height=9.0):
+    ax.add_patch(plt.Rectangle((x - width / 2, y - height / 2), width, height, facecolor=SURFACE,
+                               edgecolor=color, lw=LINE, zorder=2))
+    ax.text(x, y, text, ha="center", va="center", fontsize=9, linespacing=1.3, zorder=3)
+
+
+def arrow(ax, points, label=None, at=None):
+    """Polyline with an arrow head at its end; only horizontal and vertical segments are allowed."""
+    assert all(a[0] == b[0] or a[1] == b[1] for a, b in zip(points, points[1:])), points
+    ax.plot(*zip(*points[:-1]), color=INK2, lw=1.1, solid_capstyle="butt", zorder=1)
+    ax.annotate("", xy=points[-1], xytext=points[-2], zorder=1,
+                arrowprops={"arrowstyle": "-|>", "color": INK2, "lw": 1.1, "shrinkA": 0, "shrinkB": 0})
+    if label:
+        ax.text(*at, label, fontsize=8.5, color=INK2, ha="center", va="center", zorder=3,
+                bbox={"facecolor": SURFACE, "edgecolor": "none", "pad": 1.5})
+
+
+def figure_algorithm():
+    fig, (ax,) = frame(
+        "Algorytm 2 wątków kończy pracę, gdy istnieje dowód, obalenie albo kontrprzykład",
+        "Schemat pętli dla tezy T i teorii z programem, który sprawdza dowody. Ramka niebieska oznacza krok, "
+        "ramka szara pytanie,\nramka pomarańczowa wynik. Algorytm pracuje bez końca, gdy teoria nie rozstrzyga tezy T "
+        "i teza T nie ma kontrprzykładu.",
+        "Źródło: sekcja „Algorytm” w pliku REPORT.md. Wątek kontrprzykładów istnieje dla zdań klasy Π₁, "
+        "np. dla hipotezy Riemanna (sprawdzian 8).",
+        height=7.4,
+    )
+    ax.set(xlim=(0, 100), ylim=(8, 100))
+    ax.axis("off")
+    main, result, loop = 42, 86, 8
+    box(ax, main, 94, "Start: teza T, k = 1", MUTED, 44, 7)
+    box(ax, main, 80, "Wątek dowodów:\nsprawdź każdy tekst o długości k", BLUE, 44)
+    box(ax, main, 64, "Tekst jest dowodem tezy T?", INK2, 44, 7)
+    box(ax, main, 48, "Tekst jest dowodem zaprzeczenia tezy T?", INK2, 44, 7)
+    box(ax, main, 32, "Wątek kontrprzykładów:\nsprawdź kandydata numer k", BLUE, 44)
+    box(ax, main, 16, "Kandydat narusza tezę T?", INK2, 44, 7)
+    box(ax, result, 64, "Wynik:\nteza T ma dowód", ORANGE, 26)
+    box(ax, result, 32, "Wynik:\nteza T jest fałszywa", ORANGE, 26)
+    box(ax, loop, 48, "k := k + 1", BLUE, 14, 7)
+    arrow(ax, [(main, 90.5), (main, 84.5)])
+    arrow(ax, [(main, 75.5), (main, 67.5)])
+    arrow(ax, [(main, 60.5), (main, 51.5)], "nie", (main, 56))
+    arrow(ax, [(main, 44.5), (main, 36.5)], "nie", (main, 40.5))
+    arrow(ax, [(main, 27.5), (main, 19.5)])
+    arrow(ax, [(main + 22, 64), (result - 13, 64)], "tak", (68.5, 64))
+    arrow(ax, [(main + 22, 48), (result, 48), (result, 36.5)], "tak", (68.5, 48))
+    arrow(ax, [(main + 22, 16), (result, 16), (result, 27.5)], "tak", (68.5, 16))
+    arrow(ax, [(main - 22, 16), (loop, 16), (loop, 44.5)], "nie", (14, 16))
+    arrow(ax, [(loop, 51.5), (loop, 80), (main - 22, 80)])
+    save(fig, "algorithm-two-threads.png")
+
+
 if __name__ == "__main__":
     style()
+    figure_algorithm()
+    figure_counterexample_thread()
     figure_riemann()
     figure_hodge()
     figure_poincare()
