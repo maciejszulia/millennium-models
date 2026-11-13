@@ -1,4 +1,4 @@
-# Minimalne modele 7 problemów milenijnych: 3 modele, 7 propozycji, 7 sprawdzianów
+# Minimalne modele 7 problemów milenijnych: 3 modele, 7 propozycji, 8 sprawdzianów, 1 algorytm
 
 Maciej Szulia, maciej.szulia@gmail.com
 
@@ -6,13 +6,52 @@ Raport opisuje stan z dnia 2026-11-13.
 
 **OSTRZEŻENIE:** Nie cytuj żadnej propozycji z raportu jako dowodu. Każda propozycja dla problemu otwartego ma brakujący krok, którego dowodu autor nie zna.
 
-## Wynik
+## Streszczenie
 
-- Raport podaje 7 propozycji i 3 modele. Raport nie zawiera dowodu żadnego problemu otwartego.
-- Skrypt wykonuje 7 sprawdzianów. 6 sprawdzianów daje liczby zgodne z twierdzeniem w modelu `[obliczenie: skrypt]`.
-- Sprawdzian 4 daje liczby zgodne z hipotezą BSD dla rang 0, 1, 2 oraz odchylenie 0,23 dla rangi 3 `[obliczenie: skrypt]`.
-- 2 problemy zmieniły stan w 2026 r.: Navier–Stokes i Yang–Mills `[źródło: sieć]`.
-- Wspólna zasada 7 propozycji: wskaż 1 wielkość, która ma stały znak albo zmienia się w 1 kierunku.
+Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Wyjątek: wzór modelu dla równań Naviera–Stokesa jest rachunkiem bez dowodu. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla n od 2 do 1 000 000 `[obliczenie: skrypt]`.
+
+## Najkrótsze dowody
+
+Każdy dowód dotyczy twierdzenia w modelu albo własności algorytmu. Żaden dowód nie dotyczy problemu otwartego. Oznaczenia definiują sekcje „Model 1”, „Model 2”, „Model 3” i „Algorytm”.
+
+1. **Riemann w modelu 1: a² ≤ 4p** `[źródło: Mattuck, Tate 1958; Grothendieck 1958]`.
+   - Klasy D′ = D − H − V oraz G′ = G − H − p × V są prostopadłe do H i do V.
+   - (D′, D′) = −2; (G′, G′) = −2p; (D′, G′) = −a.
+   - Forma przecięcia jest ujemnie określona na klasach prostopadłych do H i do V, więc (D′, G′)² ≤ (D′, D′) × (G′, G′).
+2. **Hodge dla klas typu (1,1)** `[źródło: Lefschetz 1924]`.
+   - Ciąg wykładniczy snopów 0 → Z → O → O* → 0 daje ciąg dokładny Pic(X) → H²(X, Z) → H²(X, O).
+   - Klasa całkowita typu (1,1) przechodzi na 0 w H²(X, O), więc klasa pochodzi z grupy Pic(X).
+   - Klasa z grupy Pic(X) jest klasą dywizora.
+3. **Poincaré dla okrągłej sfery.**
+   - Okrągła sfera S³ o promieniu r ma tensor Ricciego Ric = (2/r²) × g.
+   - Równanie ∂g/∂t = −2 × Ric daje d(r²)/dt = −4, więc r²(t) = r₀² − 4t.
+4. **Yang–Mills, hamiltonian H = −Δ + x²y²: widmo dyskretne oraz E₀ ≥ 1,0188** `[źródło: Simon 1983]`.
+   - Oscylator −∂²/∂y² + x²y² ma poziom podstawowy |x|, więc −∂²/∂y² + x²y² ≥ |x|. Zamiana zmiennych daje −∂²/∂x² + x²y² ≥ |y|.
+   - Suma 2 nierówności daje −Δ + 2x²y² ≥ |x| + |y|.
+   - Dodanie operatora −Δ do obu stron daje 2H ≥ −Δ + |x| + |y|.
+   - Operator −Δ + |x| + |y| ma widmo dyskretne i poziom podstawowy 2 × 1,0188 `[obliczenie: skrypt]`. Zatem H ma widmo dyskretne oraz E₀ ≥ 1,0188.
+5. **P a NP w modelu zapytań.**
+   - Przeciwnik odpowiada „0” na każde pytanie o bit.
+   - Po mniej niż n pytaniach 2 wejścia zgodne z odpowiedziami dają różne wartości funkcji OR_n.
+   - Zatem algorytm deterministyczny zadaje n pytań, a certyfikat odpowiedzi „1” ma 1 bit.
+6. **Zliczanie obwodów** `[źródło: Shannon 1949]`.
+   - Obwodów o s bramkach jest co najwyżej (16 × (n + s)²)^s, a funkcji n zmiennych jest 2^(2^n).
+   - Jeżeli pierwsza liczba jest mniejsza niż druga liczba, to co najmniej 1 funkcja nie ma obwodu o s bramkach.
+7. **Algorytm: dowód albo obalenie kończy pracę.**
+   - Dowód jest tekstem o skończonej długości k₀.
+   - Pętla sprawdza każdy tekst o długości k₀ w kroku k = k₀.
+8. **Algorytm: fałszywe zdanie klasy Π₁ kończy pracę.**
+   - Fałszywe zdanie klasy Π₁ ma kontrprzykład o numerze k₀.
+   - Wątek kontrprzykładów sprawdza kandydata numer k₀ w kroku k = k₀.
+9. **Algorytm: zdanie klasy Π₁, którego teoria nie rozstrzyga, jest prawdziwe.** Warunek: teoria dowodzi wyniku każdego skończonego obliczenia.
+   - Fałszywe zdanie klasy Π₁ ma kontrprzykład.
+   - Obliczenie na kontrprzykładzie jest dowodem zaprzeczenia zdania, więc teoria rozstrzyga zdanie fałszywe.
+10. **Algorytm nie rozpoznaje braku rozstrzygnięcia** `[źródło: Turing 1936]`.
+    - Niech algorytm A kończy pracę dla każdego zdania z 1 z 3 wyników: dowód, obalenie, brak rozstrzygnięcia.
+    - Algorytm A rozstrzyga wtedy, które zdania mają dowód.
+    - Rozstrzyganie, które zdania mają dowód, rozwiązuje problem stopu. Problem stopu nie ma algorytmu.
+
+2 tezy nie mają dowodu w modelu: hipoteza BSD (model 1 daje liczby i nierówność nad ciałem funkcyjnym) oraz wzór dla Re_n w modelu 2.
 
 Legenda: znacznik `[obliczenie: skrypt]` oznacza liczbę, którą obliczył plik `models_check.py`. Znacznik `[źródło: autor rok]` wskazuje pracę z sekcji „Bibliografia”. Autor nie sprawdził żadnego odsyłacza w pracy źródłowej. Znacznik `[źródło: sieć]` wskazuje sekcję „Źródła z sieci”, czyli streszczenia wyników wyszukiwania z 2026-11-13. Autor nie otworzył stron źródłowych. Znacznik `[założenie]` oznacza zdanie bez dowodu i bez sprawdzenia.
 
@@ -25,6 +64,11 @@ Legenda: znacznik `[obliczenie: skrypt]` oznacza liczbę, którą obliczył plik
 | brakujący krok | Zdanie bez opublikowanego dowodu, które przenosi twierdzenie w modelu na pełny problem. | dziura |
 | propozycja | Plan dowodu, który nazywa model, twierdzenie w modelu i brakujący krok. | rozwiązanie, dowód |
 | sprawdzian | Obliczenie skryptu, które porównuje liczby z twierdzeniem w modelu albo z hipotezą. | test, dowód |
+| algorytm 2 wątków | Pętla z sekcji „Algorytm”, która na przemian szuka dowodu i kontrprzykładu. | metoda, procedura |
+| wątek dowodów | Część algorytmu 2 wątków, która sprawdza teksty jako dowody. | szukanie dowodu |
+| wątek kontrprzykładów | Część algorytmu 2 wątków, która sprawdza kandydatów. | szukanie błędu |
+| kandydat | Obiekt o numerze k, który wątek kontrprzykładów sprawdza w kroku k. | przypadek |
+| zdanie klasy Π₁ | Zdanie „każda liczba naturalna n spełnia warunek W(n)”, w którym skończone obliczenie sprawdza warunek W(n). | zdanie sprawdzalne |
 
 ## Stan problemów w dniu 2026-11-13
 
@@ -53,11 +97,7 @@ Zapis (A, B) oznacza liczbę przecięć krzywej A z krzywą B. Model 1 ma 1 rach
 - deg f: stopień odwzorowania f,
 - (D, G): liczba punktów stałych odwzorowania f, liczona z krotnościami.
 
-Dowód rachunku ma 3 wiersze `[źródło: Mattuck, Tate 1958; Grothendieck 1958]`:
-
-1. Klasy D′ = D − H − V oraz G′ = G − H − (deg f) × V są prostopadłe do H i do V.
-2. (D′, D′) = −2; (G′, G′) = −2 × deg f; (D′, G′) = −a.
-3. Forma przecięcia jest ujemnie określona na klasach prostopadłych do H i do V, więc (D′, G′)² ≤ (D′, D′) × (G′, G′).
+Dowód rachunku: dowód 1 w sekcji „Najkrótsze dowody”, z liczbą deg f w miejscu liczby p.
 
 Model 1 obsługuje 3 problemy.
 
@@ -69,7 +109,7 @@ Model 1 obsługuje 3 problemy.
 
 ![Suma ln(N_p/p) dla 4 krzywych o rangach 0, 1, 2, 3 na skali ln ln X. Nachylenie linii rośnie z rangą.](figures/bsd-product-slopes.png)
 
-**Hodge.** Nad ciałem liczb zespolonych każda wymierna klasa typu (1,1) na E × E jest kombinacją klas krzywych `[źródło: Lefschetz 1924]`. Rysunek pokazuje kratę torusa E = C/(Z + τZ). Mnożenie przez i obraca kratę o 90°. Tylko jeżeli obrót zachowuje kratę, mnożenie przez i jest odwzorowaniem f i torus ma krzywą G.
+**Hodge.** Nad ciałem liczb zespolonych każda wymierna klasa typu (1,1) na E × E jest kombinacją klas krzywych (dowód 2). Rysunek pokazuje kratę torusa E = C/(Z + τZ). Mnożenie przez i obraca kratę o 90°. Tylko jeżeli obrót zachowuje kratę, mnożenie przez i jest odwzorowaniem f i torus ma krzywą G.
 
 ![Lewy panel: krata kwadratowa pokrywa się z obrazem kraty po obrocie o 90°. Prawy panel: krata prostokątna i obraz kraty po obrocie mają wspólny tylko punkt 0.](figures/hodge-lattice-rotation.png)
 
@@ -79,15 +119,15 @@ W modelu 1 hipoteza Riemanna mówi o znaku formy przecięcia. Hipoteza Hodge'a m
 
 Model 2 przypisuje każdej skali długości ℓ dokładnie 1 liczbę g(ℓ). Model 2 pyta o 1 rzecz: w którą stronę liczba g zmienia się, gdy ℓ maleje.
 
-**Poincaré.** g = 1/r², gdzie r oznacza promień okrągłej sfery S³ pod przepływem Ricciego. Wzór: `r²(t) = r₀² − 4t`. Symbol t oznacza czas przepływu, a r₀ oznacza promień w chwili t = 0. Sfera znika w chwili T = r₀²/4 `[obliczenie: tensor Ricciego okrągłej sfery]`.
+**Poincaré.** g = 1/r², gdzie r oznacza promień okrągłej sfery S³ pod przepływem Ricciego. Wzór: `r²(t) = r₀² − 4t` (dowód 3). Symbol t oznacza czas przepływu, a r₀ oznacza promień w chwili t = 0. Sfera znika w chwili T = r₀²/4.
 
 ![Lewy panel: przekrój sfery w 4 chwilach, coraz mniejsze okręgi. Prawy panel: r² maleje liniowo do 0 w chwili T.](figures/poincare-sphere-shrinks.png)
 
 **Yang–Mills.** g oznacza sprzężenie teorii z grupą SU(N). Wzór: `1/g²(ℓ) = 1/g²(ℓ₀) − 2 × b₀ × ln(ℓ/ℓ₀)`, gdzie `b₀ = 11N/(48π²)` `[źródło: Gross, Wilczek 1973; Politzer 1973]`. W rachunku 1 pętli wielkość 1/g² spada do 0 na długości ℓ* = ℓ₀ × exp(1/(2 × b₀ × g²(ℓ₀))). Masa cząstki jest proporcjonalna do 1/ℓ* `[założenie]`.
 
-Rachunek pomocniczy dla Yanga–Millsa: pola jednorodne w pudle o boku L < ℓ* mają hamiltonian z potencjałem o płaskich dolinach `[źródło: Lüscher 1983]`. Hamiltonian `−Δ + x²y²` jest przekrojem hamiltonianu pól jednorodnych z 2 zmiennymi `[założenie]`. Potencjał x²y² ma doliny o energii 0. Widmo hamiltonianu `−Δ + x²y²` jest jednak dyskretne `[źródło: Simon 1983]`. Odstęp E₁ − E₀ jest proporcjonalny do ħ^(4/3), więc odstęp znika w teorii klasycznej `[obliczenie: przeskalowanie x i y przez ħ^(1/3)]`.
+Rachunek pomocniczy dla Yanga–Millsa: pola jednorodne w pudle o boku L < ℓ* mają hamiltonian z potencjałem o płaskich dolinach `[źródło: Lüscher 1983]`. Hamiltonian `−Δ + x²y²` jest przekrojem hamiltonianu pól jednorodnych z 2 zmiennymi `[założenie]`. Potencjał x²y² ma doliny o energii 0. Widmo hamiltonianu `−Δ + x²y²` jest jednak dyskretne (dowód 4). Odstęp E₁ − E₀ jest proporcjonalny do ħ^(4/3), więc odstęp znika w teorii klasycznej `[obliczenie: przeskalowanie x i y przez ħ^(1/3)]`.
 
-![Lewy panel: 1/g² maleje liniowo do 0 na długości ℓ*. Środkowy panel: gęstość stanu podstawowego skupiona w środku i kontur potencjału z 4 otwartymi dolinami. Prawy panel: 3 poziomy energii i odstęp E₁ − E₀.](figures/yang-mills-coupling-and-gap.png)
+![Lewy panel: 1/g² maleje liniowo do 0 na długości ℓ*. Środkowy panel: gęstość stanu podstawowego skupiona w środku i kontur potencjału z 4 otwartymi dolinami. Prawy panel: 3 poziomy energii, granica dolna i odstęp E₁ − E₀.](figures/yang-mills-coupling-and-gap.png)
 
 **Navier–Stokes.** g = Re_n, czyli liczba Reynoldsa wiru o rozmiarze λ^(−n). Wzór: `Re_(n+1) = Re_n × √(θ × λ^(d−2))` `[założenie]`.
 
@@ -103,8 +143,8 @@ Przepływ Ricciego jest przepływem grupy renormalizacji modelu sigma w rachunku
 
 ## Model 3: licz zapytania i bramki (P a NP)
 
-- **Zapytania.** Algorytm poznaje wejście tylko przez pytania o pojedyncze bity. Dla funkcji OR_n certyfikat odpowiedzi „1” ma 1 bit, a algorytm deterministyczny potrzebuje n zapytań. W modelu zapytań odpowiednik zdania P ≠ NP ma dowód `[źródło: Baker, Gill, Solovay 1975]`.
-- **Bramki.** Obwodów o s bramkach jest co najwyżej (16 × (n + s)²)^s, a funkcji n zmiennych jest 2^(2^n) `[źródło: Shannon 1949]`. Dla n = 20 co najmniej 1 funkcja wymaga co najmniej 30 986 bramek `[obliczenie: skrypt]`. Największe opublikowane dolne ograniczenie dla funkcji podanej wzorem wynosi 3,1 × n bramek, czyli 62 bramki dla n = 20 `[źródło: Li, Yang 2022]`.
+- **Zapytania.** Algorytm poznaje wejście tylko przez pytania o pojedyncze bity. Dla funkcji OR_n certyfikat odpowiedzi „1” ma 1 bit, a algorytm deterministyczny potrzebuje n zapytań (dowód 5). W modelu zapytań odpowiednik zdania P ≠ NP ma dowód `[źródło: Baker, Gill, Solovay 1975]`.
+- **Bramki.** Zliczanie obwodów daje dolne ograniczenie liczby bramek (dowód 6). Dla n = 20 co najmniej 1 funkcja wymaga co najmniej 30 986 bramek `[obliczenie: skrypt]`. Największe opublikowane dolne ograniczenie dla funkcji podanej wzorem wynosi 3,1 × n bramek, czyli 62 bramki dla n = 20 `[źródło: Li, Yang 2022]`.
 
 ![Lewy panel: funkcja OR wymaga n zapytań, a certyfikat odpowiedzi 1 ma 1 bit. Prawy panel: ograniczenie ze zliczania rośnie wykładniczo, a ograniczenie dla funkcji podanej wzorem rośnie liniowo.](figures/p-vs-np-queries-and-gates.png)
 
@@ -112,11 +152,49 @@ Przepływ Ricciego jest przepływem grupy renormalizacji modelu sigma w rachunku
 
 1. **Riemann (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Brakujący krok: zbuduj dla pierścienia liczb całkowitych odpowiednik powierzchni E × E z formą przecięcia i z odpowiednikiem krzywej G. Zdanie równoważne: forma Weila jest nieujemna `[źródło: Weil 1952]`. Pierwszy krok roboczy: udowodnij nieujemność formy Weila dla funkcji próbnych, których nośnik dopuszcza wkład dokładnie 1 liczby pierwszej `[założenie]`. Przypadek z wkładem samego miejsca archimedesowego ma dowód `[źródło: Connes, Consani 2021]`.
 2. **BSD (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Nad ciałem funkcyjnym hipoteza BSD jest równoważna skończoności grupy Tate'a–Szafarewicza `[źródło: Tate 1966; Kato, Trihan 2003]`. Nad ciałem Q hipoteza ma dowód dla krzywych, których funkcja L ma w punkcie s = 1 zero o krotności co najwyżej 1 `[źródło: Gross, Zagier 1986; Koływagin 1990]`. Brakujący krok: skończoność grupy Tate'a–Szafarewicza dla krzywych o randze co najmniej 2. Pierwszy krok roboczy: udowodnij skończoność dla krzywej 389a1 o randze 2.
-3. **Hodge (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Dowód dla klas typu (1,1) używa ciągu wykładniczego snopów `[źródło: Lefschetz 1924]`. Brakujący krok: konstrukcja podrozmaitości dla klasy typu (k,k) przy k ≥ 2, bo ciąg wykładniczy nie ma odpowiednika dla k ≥ 2. Dowód MUSI używać współczynników wymiernych i rzutowości, bo hipoteza bez tych 2 założeń jest fałszywa `[źródło: Atiyah, Hirzebruch 1962; Voisin 2002]`. Pierwszy krok roboczy: rozmaitości abelowe wymiaru 6 `[założenie]`. Wymiar co najwyżej 5 ma dowód `[źródło: Markman 2025; sieć]`.
+3. **Hodge (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Dowód dla klas typu (1,1) używa ciągu wykładniczego snopów (dowód 2). Brakujący krok: konstrukcja podrozmaitości dla klasy typu (k,k) przy k ≥ 2, bo ciąg wykładniczy nie ma odpowiednika dla k ≥ 2. Dowód MUSI używać współczynników wymiernych i rzutowości, bo hipoteza bez tych 2 założeń jest fałszywa `[źródło: Atiyah, Hirzebruch 1962; Voisin 2002]`. Pierwszy krok roboczy: rozmaitości abelowe wymiaru 6 `[założenie]`. Wymiar co najwyżej 5 ma dowód `[źródło: Markman 2025; sieć]`.
 4. **Yang–Mills (model 2).** Istnienie teorii ma ogłoszony dowód z 2026-10-26, więc raport nie dodaje propozycji dla istnienia. Na kracie przy silnym sprzężeniu luka masowa ma dowód `[źródło: Osterwalder, Seiler 1978]`. Brakujący krok: dolne ograniczenie odstępu E₁ − E₀, które pozostaje dodatnie, gdy bok pudła L rośnie do nieskończoności. Metoda dowodu MUSI odróżniać grupę SU(2) od grupy U(1). Teoria U(1) na kracie w 4 wymiarach ma fazę bez luki masowej `[źródło: Guth 1980; Fröhlich, Spencer 1982]`. Pierwszy krok roboczy: luka masowa w modelu O(3) w 2 wymiarach przy każdej wartości sprzężenia `[założenie]`.
 5. **Navier–Stokes (model 2).** Warianty (C) i (D) mają ogłoszony dowód z 2026-09-08, więc raport nie dodaje propozycji dla wariantów z siłą. W modelu 2 siła zewnętrzna dostarcza energię wirowi n + 1, więc ograniczenie θ ≤ 1 przestaje obowiązywać `[założenie]`. Brakujący krok dla ruchu bez siły: wyznacz kres górny ułamka θ dla prawdziwego równania. Jeżeli kres górny θ jest większy niż 1/λ na każdej skali, to model 2 daje osobliwość `[założenie]`. Jeżeli kres górny θ wynosi co najwyżej 1/λ, to model 2 daje gładkość `[założenie]`. Równanie uśrednione ma tę samą tożsamość energii i ma osobliwość `[źródło: Tao 2016]`. Dowód gładkości MUSI więc użyć własności, której równanie uśrednione nie ma. Osobliwość wymaga nieograniczonej normy L³ `[źródło: Escauriaza, Seregin, Šverák 2003]`. W modelu 2 norma L³ jest proporcjonalna do Re_n, więc model 2 zgadza się z twierdzeniem o normie L³ `[założenie]`.
 6. **P a NP (model 3).** Propozycja zakłada odpowiedź P ≠ NP `[założenie]`. Brakujący krok: dolne ograniczenie liczby bramek dla funkcji z klasy NP, które przewyższa każdy wielomian zmiennej n. Dowód MUSI ominąć 3 bariery: relatywizację, dowody naturalne i algebraizację `[źródło: Baker, Gill, Solovay 1975; Razborow, Rudich 1997; Aaronson, Wigderson 2009]`. Model zapytań pokazuje barierę relatywizacji: dowód, który działa w modelu zapytań, zostawia problem otwarty. Droga, która omija 3 bariery: algorytm sprawdzania spełnialności, który wykonuje mniej kroków niż przegląd zupełny, daje dolne ograniczenie `[źródło: Williams 2011]`. Pierwszy krok roboczy: taki algorytm dla obwodów progowych o głębokości 3 `[założenie]`.
 7. **Poincaré (model 2).** Dowód istnieje. Każda zamknięta jednospójna rozmaitość wymiaru 3 kończy przepływ Ricciego z chirurgią w skończonym czasie, tak jak okrągła sfera z modelu 2 `[źródło: Perelman 2003]`. Narzędzie dowodu: entropia W, która nie maleje wzdłuż przepływu i zachowuje wartość przy skalowaniu `[źródło: Perelman 2002]`. Propozycjom 4 i 5 brakuje wielkości o tych 2 własnościach `[założenie]`.
+
+## Algorytm
+
+Algorytm 2 wątków przyjmuje tezę T oraz teorię z programem, który sprawdza dowody. Zacznij od k = 1. Wykonaj każdy krok w tej kolejności:
+
+1. Wątek dowodów: sprawdź każdy tekst o długości k znaków.
+2. Jeżeli tekst jest dowodem tezy T, to zakończ pracę z wynikiem „teza T ma dowód”.
+3. Jeżeli tekst jest dowodem zaprzeczenia tezy T, to zakończ pracę z wynikiem „teza T jest fałszywa”.
+4. Wątek kontrprzykładów: sprawdź kandydata numer k.
+5. Jeżeli kandydat narusza tezę T, to zakończ pracę z wynikiem „teza T jest fałszywa”.
+6. Zwiększ k o 1 i wróć do kroku 1.
+
+![Schemat blokowy algorytmu 2 wątków: start, wątek dowodów, 2 pytania o dowód, wątek kontrprzykładów, pytanie o kandydata, 2 wyniki i pętla ze zwiększeniem k o 1.](figures/algorithm-two-threads.png)
+
+Algorytm ma 4 własności:
+
+- Jeżeli teoria rozstrzyga tezę T, to algorytm kończy pracę (dowód 7).
+- Jeżeli teza T jest fałszywym zdaniem klasy Π₁, to wątek kontrprzykładów kończy pracę (dowód 8).
+- Jeżeli teoria nie rozstrzyga zdania klasy Π₁, to zdanie jest prawdziwe (dowód 9).
+- Jeżeli teoria nie rozstrzyga tezy T i teza T nie ma kontrprzykładu, to algorytm pracuje bez końca. Żaden algorytm nie rozpoznaje takiego przypadku w skończonym czasie (dowód 10).
+
+Wniosek: algorytm stwierdza brak rozwiązania tylko przez obalenie tezy. Brak rozstrzygnięcia w teorii zostaje poza zasięgiem każdego algorytmu. Wątek dowodów ma koszt wykładniczy: liczba tekstów o długości k wynosi c^k, gdzie c oznacza liczbę znaków alfabetu.
+
+Tabela podaje dla każdego problemu postać tezy i wątek kontrprzykładów.
+
+| Problem | Postać tezy | Wątek kontrprzykładów |
+|---|---|---|
+| Riemann | Zdanie klasy Π₁: σ(n) ≤ H_n + exp(H_n) × ln H_n dla każdego n ≥ 1 `[źródło: Lagarias 2002]`. | Kandydat numer k jest liczbą n = k. Sprawdzian 8: 0 naruszeń dla n od 2 do 1 000 000. |
+| BSD | Dla 1 krzywej zdanie „ranga ≥ r” ma świadectwo skończone: r punktów niezależnych `[założenie]`. | Wątek punktów ogranicza rangę od dołu. Autor nie zna listy kandydatów dla pełnej hipotezy. |
+| Hodge | Autor nie zna postaci klasy Π₁ `[założenie]`. | Brak. Wyliczanie podrozmaitości potwierdza algebraiczność klasy i nie obala hipotezy. |
+| Yang–Mills | Autor nie zna postaci klasy Π₁ `[założenie]`. | Brak. Obliczenia na kracie dają oszacowanie luki masowej bez dowodu `[założenie]`. |
+| Navier–Stokes | Wariant (A) ma kontrprzykład: dane początkowe z osobliwością. | Kandydat jest parą: dane początkowe oraz dowód osobliwości sprawdzony komputerowo `[założenie]`. |
+| P a NP | Zdanie P = NP ma postać „istnieje algorytm, który dla każdego wejścia…” `[założenie]`. | Brak listy kandydatów. Algorytm przeszukiwania uniwersalnego rozwiązuje zadanie spełnialności w czasie wielomianowym wtedy i tylko wtedy, gdy P = NP `[źródło: Levin 1973]`. |
+| Poincaré | Twierdzenie. | Rozpoznawanie sfery S³ jest rozstrzygalne `[źródło: Rubinstein 1995]`. |
+
+σ(n) oznacza sumę dzielników liczby n. H_n oznacza sumę 1 + 1/2 + … + 1/n. Sprawdzian 8 wykonuje wątek kontrprzykładów dla hipotezy Riemanna. Największy iloraz lewej strony do prawej strony wynosi 0,9886 dla n = 12 `[obliczenie: skrypt]`. Obliczenia zer funkcji dzeta obejmują część urojoną od 0 do 3 × 10^12 i nie dały kontrprzykładu `[źródło: Platt, Trudgian 2021]`.
+
+![Największy iloraz w 59 przedziałach liczby n zostaje pod granicą 1. Mediana ilorazu maleje od 0,9 do 0,3. Największy iloraz 0,9886 daje liczba n = 12.](figures/riemann-counterexample-thread.png)
 
 ## Sprawdziany
 
@@ -128,11 +206,72 @@ Każdy wiersz tabeli ma znacznik `[obliczenie: skrypt]`.
 | 2 | 1 | Sygnatura formy przecięcia na klasach H, V, D, G dla 589 par (p, N_p) | (1, 3) dla każdej pary |
 | 3 | 1 | Liczba wymiernych klas typu (1,1) na E × E oraz liczba niezależnych klas krzywych | τ = i: 4 oraz 4; τ = i × 2^(1/3): 3 oraz 3 |
 | 4 | 1 | Nachylenie ln ∏ (N_p/p) względem ln ln X, X od 100 do 100 000 włącznie | ranga 0: 0,00; ranga 1: 1,07; ranga 2: 2,05; ranga 3: 2,77 |
-| 5 | 2 | Poziomy hamiltonianu −Δ + x²y² w 3 bazach: 20 × 20, 35 × 35, 50 × 50 | E₀ = 1,10822; E₁ = 2,37864; E₁ − E₀ = 1,27041; jednakowe liczby w każdej bazie |
+| 5 | 2 | Poziomy hamiltonianu −Δ + x²y² w 3 bazach: 12 × 12, 16 × 16, 20 × 20 | E₀ = 1,10822 w każdej bazie; E₁ = 2,37864; E₁ − E₀ = 1,27041; granica dolna dla E₀: 1,0188 |
 | 6 | 3 | Funkcja OR_n, n od 1 do 8 włącznie | n zapytań; certyfikat odpowiedzi „1” ma 1 bit |
 | 7 | 3 | Zliczanie obwodów dla n = 20 | 30 986 bramek; dla funkcji podanej wzorem: 62 bramki |
+| 8 | algorytm | Nierówność Lagariasa dla n od 2 do 1 000 000 włącznie | 0 naruszeń; największy iloraz 0,9886 dla n = 12 |
 
-Sprawdzian 4 używa 4 krzywych: 11a3, 37a1, 389a1, 5077a1. Hipoteza BSD przewiduje nachylenie równe randze. Wzrost iloczynu jak (ln X)^r nie ma dowodu dla żadnej z 4 krzywych `[założenie]`.
+Sprawdzian 4 używa 4 krzywych: 11a3, 37a1, 389a1, 5077a1. Hipoteza BSD przewiduje nachylenie równe randze. Wzrost iloczynu jak (ln X)^r nie ma dowodu dla żadnej z 4 krzywych `[założenie]`. Sprawdziany 1 i 2 są równoważne: sygnatura (1, 3) zachodzi wtedy i tylko wtedy, gdy a² < 4p.
+
+## Uproszczenia
+
+Każdy czas w tabeli ma znacznik `[pomiar: time.perf_counter, 2026-11-13, laptop autora z 8 wątkami procesora]`.
+
+| Nr | Element | Przed | Po | Skutek dla liczb |
+|---|---|---|---|---|
+| 1 | Sprawdzian 5: rozmiar baz | bazy 20, 35, 50; 15,2 s | bazy 12, 16, 20; 0,3 s | E₀ i E₁ bez zmian w 5 cyfrach |
+| 2 | Sprawdzian 4: pętla po liczbach pierwszych | 1 proces; 54 s | 8 procesów; 11 s | każda suma bez zmian |
+| 3 | Skrypt `models_check.py` | 68 s; 7 sprawdzianów | 16 s; 8 sprawdzianów | 3 nowe liczby |
+| 4 | Skrypt `figures.py` | co najmniej 54 s; 7 rysunków | 18 s; 9 rysunków | 6 rysunków bez zmiany 1 bajtu |
+| 5 | Dowód widma dyskretnego hamiltonianu −Δ + x²y² | odsyłacz do pracy | 4 wiersze (dowód 4) i asercja E₀ ≥ 1,0188 | nowa liczba 1,0188 |
+| 6 | Postać hipotezy Riemanna | zdanie o zerach funkcji dzeta | 1 nierówność dla liczb naturalnych (sprawdzian 8) | nowa liczba 0,9886 |
+| 7 | Dowody w raporcie | 1 dowód w tekście | 10 dowodów na początku, każdy ma co najwyżej 4 wiersze | brak |
+| 8 | Sekcje o ograniczeniach | 2 listy | 1 lista w sekcji „Problematyka” | brak |
+
+3 elementy zostają bez uproszczenia:
+
+- Liczba modeli wynosi 3. Autor nie znalazł układu z 2 modelami, który zachowuje twierdzenie w modelu dla każdego problemu.
+- Sprawdzian 4 zachowuje zakres X = 100 000. Zakres X mniejszy niż 100 000 zmienia nachylenia.
+- Wątek dowodów zachowuje koszt wykładniczy. Autor nie zna algorytmu ogólnego o koszcie wielomianowym `[założenie]`.
+
+## Zastosowania
+
+Każdy punkt jest propozycją zastosowania, bez wdrożenia.
+
+1. Kryptografia krzywych eliptycznych: dobór krzywej wymaga liczby punktów N i granicy a² ≤ 4p. Sprawdzian 1 liczy obie wielkości `[założenie]`.
+2. Kryptografia z kluczem publicznym zakłada zdanie P ≠ NP `[założenie]`. Model zapytań pokazuje metody dowodu, które nie rozstrzygają zdania P ≠ NP.
+3. Nauczanie: 1 problem dostaje 1 rysunek i 1 dowód z co najwyżej 4 wierszy.
+4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 14 liczb z raportem i kończy pracę błędem przy różnicy.
+5. Symulacje przepływów: liczba Re_n wskazuje skalę, na której siatka obliczeniowa wymaga zagęszczenia `[założenie]`.
+6. Metody wariacyjne w fizyce: hamiltonian −Δ + x²y² daje poziom E₀ z 5 cyframi oraz granicę dolną do porównań `[obliczenie: skrypt]`.
+7. Sprawdzanie dowodów: wątek dowodów jest programem, który sprawdza dowody. Formalizacje z 2026 r. używają systemu Lean `[źródło: sieć]`.
+
+## Problematyka
+
+1. Sprawdzian obejmuje skończoną liczbę przypadków. Sprawdzian nie jest dowodem.
+2. Algorytm 2 wątków nie rozpoznaje braku rozstrzygnięcia w teorii (dowód 10).
+3. Wątek dowodów ma koszt wykładniczy, więc algorytm 2 wątków nie nadaje się do praktycznego szukania dowodów.
+4. 5 z 7 problemów nie ma listy kandydatów: BSD, Hodge, Yang–Mills, P a NP, Poincaré. Hipoteza Poincarégo ma dowód, więc lista jest zbędna.
+5. Sprawdzian 8 jest słabym sprawdzianem. Obliczenia zer funkcji dzeta wykluczają kontrprzykład w zakresie, którego sprawdzian 8 nie osiąga `[źródło: Platt, Trudgian 2021]`.
+6. Sprawdzian 4 nie potwierdza rangi 3 z dokładnością lepszą niż 0,23. Iloczyn zbiega logarytmicznie.
+7. Dla hipotezy BSD model 1 dowodzi tylko nierówności nad ciałem funkcyjnym. Model 1 spełnia definicję modelu ze słownika dla BSD częściowo.
+8. Wzór dla Re_n w modelu 2 jest rachunkiem autora bez dowodu.
+9. Hamiltonian −Δ + x²y² jest przekrojem z 2 zmiennymi. Przeniesienie odstępu E₁ − E₀ na teorię pola nie ma dowodu.
+10. Autor nie sprawdził żadnego odsyłacza do literatury w pracy źródłowej.
+11. Stan problemów z 2026 r. pochodzi ze streszczeń wyników wyszukiwania. 2 serwisy podają, że dowód OpenAI nie dotyczy problemu milenijnego. Strona OpenAI i Wikipedia podają warianty (C) i (D).
+12. Formalizacja dowodu w systemie Lean nie gwarantuje zgodności z tezą słowną. Praca z 2026-10-06 zarzuca taką niezgodność 1 formalizacji `[źródło: sieć]`.
+13. Rysunek dla hipotezy Hodge'a pokazuje kratę torusa E. Powierzchnia E × E ma 4 wymiary rzeczywiste i nie ma rysunku.
+
+## Dyskusja
+
+Autor proponuje 6 pytań do dyskusji:
+
+1. Czy liczba 3 jest najmniejszą liczbą modeli? Kontrpropozycja: 2 modele, jeżeli problem P a NP dostanie model w geometrii algebraicznej, np. permanent a wyznacznik `[założenie]`.
+2. Czy dowód wariantu (C) z siłą zewnętrzną zamyka problem Naviera–Stokesa, skoro pytanie o ruch bez siły zostaje otwarte?
+3. Czy dowód, który znalazł program i który sprawdził system Lean, rozwiązuje problem bez zrozumienia dowodu przez człowieka?
+4. Czy ułamek θ ma definicję dla prawdziwego równania, przy której wzór modelu 2 staje się twierdzeniem?
+5. Czy hipoteza Hodge'a albo luka masowa ma postać równoważną klasy Π₁, czyli postać z listą kandydatów?
+6. Która wielkość pełni dla Yanga–Millsa i dla Naviera–Stokesa rolę entropii W z dowodu hipotezy Poincarégo?
 
 ## Jak powtórzyć obliczenia
 
@@ -141,19 +280,9 @@ Wykonaj każdy krok w tej kolejności:
 1. Utwórz środowisko: `python3 -m venv .venv`.
 2. Zainstaluj biblioteki: `.venv/bin/pip install -r requirements.txt`.
 3. Uruchom sprawdziany: `.venv/bin/python models_check.py`. Wynik: skrypt wypisuje wiersz `all checks passed`.
-4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 7 plików PNG.
+4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 9 plików PNG.
 
-Skrypt `models_check.py` porównuje liczby z tabeli „Sprawdziany” z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
-
-## Ograniczenia
-
-1. Sprawdzian obejmuje skończoną liczbę przypadków. Sprawdzian nie jest dowodem.
-2. Sprawdzian 4 nie potwierdza rangi 3 z dokładnością lepszą niż 0,23. Iloczyn zbiega logarytmicznie.
-3. Dla hipotezy BSD model 1 dowodzi tylko nierówności nad ciałem funkcyjnym. Model 1 spełnia definicję modelu ze słownika dla BSD częściowo.
-4. Wzór dla Re_n w modelu 2 jest rachunkiem autora bez dowodu.
-5. Autor nie sprawdził żadnego odsyłacza do literatury w pracy źródłowej.
-6. Stan problemów z 2026 r. pochodzi ze streszczeń wyników wyszukiwania. 2 serwisy podają, że dowód OpenAI nie dotyczy problemu milenijnego. Strona OpenAI i Wikipedia podają warianty (C) i (D).
-7. Rysunek dla hipotezy Hodge'a pokazuje kratę torusa E. Powierzchnia E × E ma 4 wymiary rzeczywiste i nie ma rysunku.
+Skrypt `models_check.py` porównuje 14 liczb z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
 
 ## Decyzje i braki
 
@@ -165,6 +294,8 @@ Skrypt `models_check.py` porównuje liczby z tabeli „Sprawdziany” z obliczen
 | 4 | pochodzenie modeli | A4 | 2 znaczenia: modele nowe; modele dobrane z literatury. | Modele dobrane z literatury i złożone w 1 układ. Wzór dla Re_n w modelu 2 jest rachunkiem autora bez dowodu. |
 | 5 | terminy matematyczne | A4 | Raport nie definiuje terminów matematycznych. | Odstępstwo od reguły A4. Każdy termin ma znaczenie z pracy wskazanej znacznikiem. |
 | 6 | znaczniki źródła | B8 | Licznik słów pomija znaczniki i wzory w ramkach kodu. | Limit 25 słów dotyczy zdania bez znacznika. |
+| 7 | kolejność sekcji | A4 | Sekcja „Najkrótsze dowody” stoi przed definicjami oznaczeń. | Odstępstwo od reguły A4. Streszczenie i dowody stoją na początku, a dowody odsyłają do sekcji z definicjami. |
+| 8 | „brak rozwiązania” | A4 | 2 znaczenia: teza jest fałszywa; teoria nie rozstrzyga tezy. | Algorytm stwierdza tylko fałszywość tezy. Dowód 10 wyklucza algorytm dla drugiego znaczenia. |
 
 Raport stosuje reguły standardu Polszczyzna Kontrolowana (PK) 0.1. Kolumna „Reguła” podaje numer reguły PK.
 
@@ -188,7 +319,9 @@ Autor nie sprawdził żadnej pozycji z egzemplarzem pracy.
 - Hasse, H. (1933). Beweis des Analogons der Riemannschen Vermutung für die Artinschen und F. K. Schmidtschen Kongruenzzetafunktionen in gewissen elliptischen Fällen. Nachrichten der Gesellschaft der Wissenschaften zu Göttingen.
 - Kato, K., Trihan, F. (2003). On the conjectures of Birch and Swinnerton-Dyer in characteristic p > 0. Inventiones Mathematicae 153.
 - Koływagin, W. (Kolyvagin, V.) (1990). Euler systems. The Grothendieck Festschrift, tom II.
+- Lagarias, J. (2002). An elementary problem equivalent to the Riemann hypothesis. American Mathematical Monthly 109.
 - Lefschetz, S. (1924). L'analysis situs et la géométrie algébrique. Gauthier-Villars.
+- Levin, L. (1973). Universal sequential search problems. Problemy Peredachi Informatsii 9.
 - Li, J., Yang, T. (2022). 3.1n − o(n) circuit lower bounds for explicit functions. STOC 2022.
 - Lüscher, M. (1983). Some analytic results concerning the mass spectrum of Yang–Mills gauge theories on a torus. Nuclear Physics B 219.
 - Ładyżenska, O. (Ladyzhenskaya, O. A.) (1959). Solution “in the large” of the nonstationary boundary value problem for the Navier–Stokes system with two space variables. Communications on Pure and Applied Mathematics 12.
@@ -198,12 +331,15 @@ Autor nie sprawdził żadnej pozycji z egzemplarzem pracy.
 - Perelman, G. (2002). The entropy formula for the Ricci flow and its geometric applications. arXiv:math/0211159.
 - Perelman, G. (2003). Ricci flow with surgery on three-manifolds. arXiv:math/0303109.
 - Perelman, G. (2003). Finite extinction time for the solutions to the Ricci flow on certain three-manifolds. arXiv:math/0307245.
+- Platt, D., Trudgian, T. (2021). The Riemann hypothesis is true up to 3 × 10^12. Bulletin of the London Mathematical Society 53.
 - Politzer, H. D. (1973). Reliable perturbative results for strong interactions? Physical Review Letters 30.
 - Razborow, A. (Razborov, A.), Rudich, S. (1997). Natural proofs. Journal of Computer and System Sciences 55.
+- Rubinstein, J. H. (1995). An algorithm to recognize the 3-sphere. Proceedings of the International Congress of Mathematicians 1994.
 - Shannon, C. (1949). The synthesis of two-terminal switching circuits. Bell System Technical Journal 28.
 - Simon, B. (1983). Some quantum operators with discrete spectrum but classically continuous spectrum. Annals of Physics 146.
 - Tao, T. (2016). Finite time blowup for an averaged three-dimensional Navier–Stokes equation. Journal of the American Mathematical Society 29.
 - Tate, J. (1966). On the conjectures of Birch and Swinnerton-Dyer and a geometric analog. Séminaire Bourbaki 306.
+- Turing, A. (1936). On computable numbers, with an application to the Entscheidungsproblem. Proceedings of the London Mathematical Society 42.
 - Voisin, C. (2002). A counterexample to the Hodge conjecture extended to Kähler varieties. International Mathematics Research Notices.
 - Weil, A. (1952). Sur les « formules explicites » de la théorie des nombres premiers. Communications du Séminaire Mathématique de l'Université de Lund.
 - Williams, R. (2011). Non-uniform ACC circuit lower bounds. IEEE Conference on Computational Complexity 2011.

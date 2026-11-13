@@ -9,13 +9,16 @@ Model 1  surface E x E with the curves H, V, D, G  -> Riemann, BSD, Hodge
 Model 2  scale flow: one number per length scale   -> Poincare, Yang-Mills, Navier-Stokes
 Model 3  counting queries and gates                -> P vs NP
 
-The Poincare and Navier-Stokes parts of model 2 are closed-form formulas,
-so this file computes nothing for them.
+Check 8 runs the counterexample thread of the two-thread algorithm for the
+Riemann hypothesis. The Poincare and Navier-Stokes parts of model 2 are
+closed-form formulas, so this file computes nothing for them.
 
-Run: python3 models_check.py   (needs numpy; takes about 2 minutes)
+Run: python3 models_check.py   (needs numpy; takes under 1 minute on 4 cores)
 """
 import math
+import os
 import time
+from concurrent.futures import ProcessPoolExecutor
 from fractions import Fraction
 from functools import lru_cache
 from itertools import combinations
@@ -228,26 +231,43 @@ CURVES = {  # y^2 + y = x^3 + c2*x^2 + c1*x + c0: (c2, c1, c0, bad prime, rank)
 }
 
 
-def bsd_series(xmax=100_000):
+def _bsd_logs(ps):
+    """log(N_p / p) per curve (rows) and per prime of ps (columns); 0 at the bad prime."""
+    coef = [(4 * c2, 4 * c1, 4 * c0 + 1, bad) for c2, c1, c0, bad, _ in CURVES.values()]
+    logs = np.zeros((len(coef), len(ps)))
+    big = np.arange(max(ps), dtype=np.int64)
+    for idx, p in enumerate(ps):
+        xs = big[:p]
+        x2 = xs * xs
+        chi = np.full(p, -1, dtype=np.int8)  # Legendre symbol table
+        chi[x2 % p] = 1
+        chi[0] = 0
+        x3 = 4 * x2 * xs  # below 4e15, fits int64
+        for j, (a2, a1, a0, bad) in enumerate(coef):
+            if p == bad:
+                continue
+            v = x3 + a0  # 4*f(x) + 1: the discriminant of y^2 + y = f(x)
+            if a2:
+                v += a2 * x2
+            if a1:
+                v += a1 * xs
+            logs[j, idx] = math.log((p + 1 + int(chi[v % p].sum(dtype=np.int64))) / p)
+    return logs
+
+
+def bsd_series(xmax=100_000, workers=None):
     """Primes 2 < p <= xmax and, per curve, log of prod N_q / q over good primes q <= p.
 
     Skipped primes (2 and the bad prime) change only a constant factor.
+    The primes are dealt out to worker processes; the result does not depend on their number.
     """
     ps = [p for p in primes_upto(xmax) if p > 2]
-    logs = {k: np.zeros(len(ps)) for k in CURVES}
-    big = np.arange(xmax, dtype=np.int64)
-    for idx, p in enumerate(ps):
-        xs = big[:p]
-        chi = legendre_table(p, xs)
-        x2 = xs * xs
-        x3 = x2 * xs  # below 1e15, fits int64
-        for name, (c2, c1, c0, bad, _) in CURVES.items():
-            if p == bad:
-                continue
-            fx = x3 + c2 * x2 + c1 * xs + c0
-            n_p = p + 1 + int(chi[(4 * fx + 1) % p].sum())
-            logs[name][idx] = math.log(n_p / p)
-    return np.array(ps, dtype=float), {k: np.cumsum(v) for k, v in logs.items()}
+    workers = min(workers or os.cpu_count() or 1, len(ps))
+    logs = np.zeros((len(CURVES), len(ps)))
+    with ProcessPoolExecutor(workers) as pool:
+        for i, part in enumerate(pool.map(_bsd_logs, [ps[i::workers] for i in range(workers)])):
+            logs[:, i::workers] = part
+    return np.array(ps, dtype=float), dict(zip(CURVES, np.cumsum(logs, axis=1)))
 
 
 def bsd_products(xmax=100_000, data=None):
@@ -291,15 +311,25 @@ def x2y2_levels(m, px, py, coupling=1.0, k=3):
     return np.linalg.eigvalsh(x2y2_hamiltonian(m, px, py, coupling))[:k]
 
 
-def check_x2y2(sizes=(20, 35, 50)):
+def abs_potential_ground_level(n=1201, half_width=10.0):
+    """Lowest level of -d^2/dx^2 + |x| by finite differences; it bounds E0 of x^2 y^2 from below."""
+    x = np.linspace(-half_width, half_width, n)
+    step = x[1] - x[0]
+    off = np.full(n - 1, -1.0 / step**2)
+    return float(np.linalg.eigvalsh(np.diag(2.0 / step**2 + np.abs(x)) + np.diag(off, 1) + np.diag(off, -1))[0])
+
+
+def check_x2y2(sizes=(12, 16, 20)):
     conv = [(m, float(x2y2_levels(m, 0, 0)[0]), float(x2y2_levels(m, 0, 0, 0.0)[0])) for m in sizes]
     m = sizes[-1]
     levels = sorted(
         float(e) for px, py in ((0, 0), (1, 1), (0, 1), (1, 0)) for e in x2y2_levels(m, px, py)
     )
-    assert abs(conv[-1][1] - conv[-2][1]) < 1e-2 and conv[-1][1] > 1.0, conv
+    bound = abs_potential_ground_level()
+    assert abs(conv[-1][1] - conv[0][1]) < 1e-5, conv  # the ground level has converged
     assert conv[-1][2] < conv[0][2], conv  # free particle: no stable ground level
-    return conv, levels[:4]
+    assert levels[0] >= bound > 1.0, (levels[0], bound)  # H >= (-Laplace + |x| + |y|) / 2
+    return conv, levels[:4], bound
 
 
 # --- Model 3, checks 6 and 7: query complexity and Shannon counting ---
@@ -364,6 +394,29 @@ def check_queries(nmax=8):
     return rows
 
 
+# --- Algorithm, check 8: the counterexample thread for the Riemann hypothesis ---
+
+
+def lagarias_ratios(nmax=1_000_000):
+    """sigma(n) / (H_n + exp(H_n) * log(H_n)) for n = 1..nmax.
+
+    The Riemann hypothesis holds if and only if no ratio exceeds 1 (Lagarias 2002).
+    """
+    sigma = np.arange(nmax + 1, dtype=np.int64)  # the divisor d = n
+    for d in range(1, nmax // 2 + 1):
+        sigma[2 * d :: d] += d
+    h = np.cumsum(1.0 / np.arange(1, nmax + 1))
+    return sigma[1:] / (h + np.exp(h) * np.log(h))
+
+
+def check_lagarias(ratios=None):
+    """Largest ratio over n >= 2 (n = 1 gives equality): returns nmax, the n that attains it, the ratio."""
+    ratios = lagarias_ratios() if ratios is None else ratios
+    worst = int(np.argmax(ratios[1:])) + 2
+    assert ratios[0] == 1.0 and ratios[worst - 1] < 1.0, (worst, ratios[worst - 1])
+    return len(ratios), worst, float(ratios[worst - 1])
+
+
 if __name__ == "__main__":
     t0 = time.time()
     curves, pairs, worst = check_hasse_via_hodge_index()
@@ -378,20 +431,23 @@ if __name__ == "__main__":
         print(f"[check 4] {name:7s} rank {r}: log prod N_p/p at X=1e3, 1e4, 1e5 = "
               f"{marks[0]:+.3f}, {marks[1]:+.3f}, {marks[2]:+.3f}; slope vs log log X = {slope:.2f}")
     print(f"[check 4] time {time.time() - t1:.0f} s")
-    conv, levels = check_x2y2()
+    conv, levels, bound = check_x2y2()
     for m, e0, free in conv:
         print(f"[check 5] basis {m}x{m}: E0(-Laplace + x^2 y^2) = {e0:.5f}; E0(free particle) = {free:.5f}")
-    print(f"[check 5] lowest levels: {', '.join(f'{e:.5f}' for e in levels)}; gap = {levels[1] - levels[0]:.5f}")
+    print(f"[check 5] lowest levels: {', '.join(f'{e:.5f}' for e in levels)}; gap = {levels[1] - levels[0]:.5f}; "
+          f"lower bound for E0 = {bound:.4f}")
     rows = check_queries()
     print(f"[check 6] OR_n, n = 1..{len(rows)}: deterministic queries = n, certificate for answer 1 = 1 bit")
     for n in (20, 30):
         print(f"[check 7] n = {n}: some function needs at least {shannon_min_gates(n)} gates; "
               f"best explicit bound 3.1*n = {3.1 * n:.0f}")
+    nmax, worst_n, worst_ratio = check_lagarias()
+    print(f"[check 8] Lagarias inequality, n = 2..{nmax}: 0 violations; largest ratio {worst_ratio:.4f} at n = {worst_n}")
     report = Path(__file__).with_name("REPORT.md")
     if report.exists():  # the report must quote the numbers computed above
         quoted = [thousands(curves), str(pairs), pl(worst, 4), *(pl(v[2]) for v in bsd.values()),
-                  pl(levels[0], 5), pl(levels[1], 5), pl(levels[1] - levels[0], 5),
-                  thousands(shannon_min_gates(20))]
+                  pl(levels[0], 5), pl(levels[1], 5), pl(levels[1] - levels[0], 5), pl(bound, 4),
+                  thousands(shannon_min_gates(20)), thousands(nmax), pl(worst_ratio, 4)]
         missing = [q for q in quoted if q not in report.read_text(encoding="utf-8")]
         assert not missing, f"REPORT.md does not quote: {missing}"
         print(f"[report] REPORT.md quotes all {len(quoted)} computed numbers")
