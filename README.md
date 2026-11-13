@@ -14,6 +14,7 @@ Autor: Maciej Szulia, maciej.szulia@gmail.com
 | [models_check.py](models_check.py) | 7 sprawdzianów. Jeżeli co najmniej 1 sprawdzian daje liczby niezgodne z twierdzeniem, to skrypt kończy pracę błędem. |
 | [figures.py](figures.py) | Skrypt, który rysuje 7 rysunków. |
 | [figures](figures) | 7 rysunków, po 1 rysunku na problem. |
+| [LICENSE](LICENSE) | Licencja MIT. |
 
 ## 3 modele
 
