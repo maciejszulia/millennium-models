@@ -1,0 +1,7 @@
+checks:
+  image: python:3.13-slim
+  script:
+    - pip install --no-cache-dir -r requirements.txt
+    - python models_check.py
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

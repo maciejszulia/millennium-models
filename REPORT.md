@@ -335,7 +335,7 @@ Każdy punkt jest propozycją zastosowania, bez wdrożenia.
 10. Hamiltonian $-\Delta + x^2y^2$ jest przekrojem z 2 zmiennymi. Przeniesienie odstępu $E_1 - E_0$ na teorię pola nie ma dowodu.
 11. Sprawdzenie odsyłaczy z 2026-11-13 objęło tekst 4 prac i abstrakty 5 prac. 26 twierdzeń ma potwierdzenie tylko w źródle wtórnym, a 4 twierdzenia nie mają potwierdzenia.
 12. Sprawdzenie wykazało 1 błędne przypisanie: dowód przez ciąg wykładniczy nie pochodzi z pracy Lefschetza. Raport ma poprawkę w dowodzie 2.
-13. Stan problemów z 2026 r. pochodzi z 7 stron, które sprawdzenie otworzyło. Strona OpenAI wymaga JavaScriptu, więc raport cytuje stronę OpenAI za 2 innymi serwisami.
+13. Sprawdzenie otworzyło 8 z 10 stron z sekcji „Źródła z sieci”. Raport zna stronę OpenAI i pracę arXiv:2610.08144 tylko ze źródeł wtórnych.
 14. Formalizacja dowodu w systemie Lean nie gwarantuje zgodności z tezą słowną. Praca z 2026-10-06 zarzuca taką niezgodność 1 formalizacji `[źródło: sieć]`.
 15. Rysunek torusa pokazuje przekrój rzeczywisty modelu 1. Powierzchnia $E \times E$ ma 4 wymiary rzeczywiste i nie ma rysunku.
 16. Rysunki 3 wymiarów na stronie interaktywnej wymagają przeglądarki z WebGL.
@@ -444,7 +444,7 @@ Plik [references-check.md](references-check.md) podaje dla pozycji z 2026-11-13 
 
 ## Źródła z sieci
 
-Sprawdzenie z 2026-11-13 otworzyło 7 z 8 stron. Strona OpenAI wymaga JavaScriptu.
+Sekcja zawiera 10 stron. Sprawdzenie z 2026-11-13 otworzyło 8 stron. Strona OpenAI wymaga JavaScriptu, więc raport cytuje stronę OpenAI za 2 innymi serwisami. Sprawdzenie nie otworzyło strony arXiv:2610.08144: raport zna tę pracę z przypisu Wikipedii.
 
 - [Millennium Prize Problems (Wikipedia)](https://en.wikipedia.org/wiki/Millennium_Prize_Problems)
 - [Millennium Problems (Clay Mathematics Institute)](https://www.claymath.org/millennium-problems/)
