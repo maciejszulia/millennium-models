@@ -19,3 +19,20 @@ jobs:
           pip install -r requirements.txt
       - name: Run the 14 checks and compare the numbers quoted in REPORT.md
         run: python models_check.py
+
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the 16 theorems with Lean 4 and Mathlib
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: lean
+
+  octave:
+    runs-on: ubuntu-latest
+    container: gnuoctave/octave:11.3.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the 3 simulations and compare the numbers with REPORT.md
+        run: octave-cli matlab/run_all.m

@@ -444,6 +444,8 @@ def check_simulations():
     _, energies, enstrophies, peaks, _ = sim.vorticity_2d()
     assert np.diff(enstrophies).max() <= 0 and np.diff(energies).max() <= 0, "enstrophy and energy must not grow"
     assert peaks.max() <= peaks[0] * (1 + 1e-9), peaks.max()  # check 10: maximum principle
+    peak_rise = float((np.diff(peaks) / peaks[:-1]).max())  # the spectral scheme breaks the principle slightly
+    assert peak_rise < 0.01, peak_rise
     assert abs(x2y2_levels(20, 0, 0)[0] - sim.GROUND_LEVEL) < 1e-5  # the orbits start with the energy E0
     path, drift = sim.classical_x2y2()
     reach = np.abs(path).max(axis=(1, 2))
@@ -455,7 +457,7 @@ def check_simulations():
     return {
         "area_error": area_error, "ratio_start": float(ratios[0]), "ratio_end": float(ratios[-1]),
         "enstrophy_start": float(enstrophies[0]), "enstrophy_end": float(enstrophies[-1]),
-        "peak_start": float(peaks[0]), "peak_end": float(peaks[-1]),
+        "peak_start": float(peaks[0]), "peak_end": float(peaks[-1]), "peak_rise": peak_rise,
         "orbits": int(reach.size), "orbits_at_limit": int((reach >= 30).sum()), "reach_min": float(reach.min()),
         "time_outside": time_outside, "mass_outside": mass_outside,
         "sat_sizes": sizes, "sat_medians": medians, "sat_slope": slope,
@@ -527,7 +529,8 @@ if __name__ == "__main__":
     print(f"[check 9] curve shortening: area error {100 * sim['area_error']:.2f} % of the first area; "
           f"isoperimetric ratio {sim['ratio_start']:.3f} -> {sim['ratio_end']:.4f}")
     print(f"[check 10] vorticity in 2 dimensions: enstrophy {sim['enstrophy_start']:.3f} -> {sim['enstrophy_end']:.3f}; "
-          f"max |w| {sim['peak_start']:.2f} -> {sim['peak_end']:.2f}; neither grows")
+          f"max |w| {sim['peak_start']:.2f} -> {sim['peak_end']:.2f}; enstrophy never grows between samples; "
+          f"largest rise of max |w| between 2 samples {100 * sim['peak_rise']:.2f} %")
     print(f"[check 11] classical orbits of x^2 y^2: {sim['orbits']} of {sim['orbits']} leave the square 3, "
           f"{sim['orbits_at_limit']} reach 30; time outside {100 * sim['time_outside']:.0f} %; "
           f"quantum mass outside {100 * sim['mass_outside']:.2f} %")
@@ -542,7 +545,7 @@ if __name__ == "__main__":
                   pl(levels[0], 5), pl(levels[1], 5), pl(levels[1] - levels[0], 5), pl(bound, 4),
                   thousands(shannon_min_gates(20)), thousands(nmax), pl(worst_ratio, 4),
                   pl(100 * sim["area_error"], 2), pl(sim["ratio_end"], 4), pl(sim["enstrophy_start"], 3),
-                  pl(sim["enstrophy_end"], 3), pl(100 * sim["mass_outside"], 2), pl(sim["sat_slope"], 3),
+                  pl(sim["enstrophy_end"], 3), pl(100 * sim["peak_rise"], 2), pl(100 * sim["mass_outside"], 2), pl(sim["sat_slope"], 3),
                   pl(zeros[0], 3), pl(off_line, 3), pl(distance, 4)]
         text = report.read_text(encoding="utf-8").replace("{,}", ",")  # LaTeX decimal comma
         missing = [q for q in quoted if q not in text]

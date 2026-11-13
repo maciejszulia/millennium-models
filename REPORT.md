@@ -8,7 +8,7 @@ Raport opisuje stan z dnia 2026-11-13.
 
 ## Streszczenie
 
-Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 `[obliczenie: skrypt]`. 4 symulacje i 18 rysunków pokazują modele w 2 wymiarach i w 3 wymiarach.
+Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 `[obliczenie: skrypt]`. 4 symulacje i 22 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
 
 ## Najkrótsze dowody
 
@@ -75,6 +75,7 @@ Legenda: znacznik `[obliczenie: skrypt]` oznacza liczbę, którą obliczył plik
 | algorytm 2 wątków | Pętla z sekcji „Algorytm”, która na przemian szuka dowodu i kontrprzykładu. | metoda, procedura |
 | wątek dowodów | Część algorytmu 2 wątków, która sprawdza teksty jako dowody. | szukanie dowodu |
 | wątek kontrprzykładów | Część algorytmu 2 wątków, która sprawdza kandydatów. | szukanie błędu |
+| etap | Część brakującego kroku, którą opisuje 1 pozycja listy z sekcji „Etapy uzupełnienia brakujących kroków”. | faza |
 | kandydat | Obiekt o numerze $k$, który wątek kontrprzykładów sprawdza w kroku $k$. | przypadek |
 | zdanie klasy $\Pi_1$ | Zdanie „każda liczba naturalna $n$ spełnia warunek $W(n)$”, w którym skończone obliczenie sprawdza warunek $W(n)$. | zdanie sprawdzalne |
 
@@ -177,7 +178,7 @@ Dla $d = 2$ liczba $\mathrm{Re}_n$ nie rośnie przy żadnym $\theta$. Wniosek dl
 
 ![Lewy panel, 3 wymiary: liczba Reynoldsa rośnie dla θ = 0,70, jest stała dla θ = 0,50 i maleje dla θ = 0,35. Prawy panel, 2 wymiary: liczba Reynoldsa maleje dla każdej z 3 wartości θ.](figures/navier-stokes-reynolds-cascade.png)
 
-Symulacja 10 rozwiązuje prawdziwe równania w 2 wymiarach, czyli w wymiarze, w którym gładkość ma dowód. Enstrofia spada z 2,206 do 1,147, a największa wirowość spada z 6,00 do 4,51. Żadna z 2 wielkości nie rośnie w żadnym kroku `[obliczenie: skrypt]`.
+Symulacja 10 rozwiązuje prawdziwe równania w 2 wymiarach, czyli w wymiarze, w którym gładkość ma dowód. Enstrofia spada z 2,206 do 1,147 i nie rośnie w żadnym z 40 odstępów próbek. Największa wirowość spada z 6,00 do 4,51 i nie przekracza wartości początkowej. Największa wirowość rośnie w 1 z 40 odstępów próbek, o 0,25 % `[obliczenie: skrypt]`. Dla równania ciągłego największa wirowość nie rośnie `[założenie]`, więc ten wzrost jest błędem dyskretyzacji.
 
 ![Animacja: pole wirowości w 2 wymiarach wygładza się, a enstrofia i największa wirowość maleją.](figures/navier-stokes-vorticity-2d.gif)
 
@@ -220,11 +221,61 @@ Autor nie udowodnił żadnego brakującego kroku. Każdy wiersz podaje krok w po
 | P a NP | Zadanie spełnialności nie ma obwodów o wielomianowej liczbie bramek. | Krok daje $P \ne NP$ (dowód 12). | Dolne ograniczenie większe niż $3{,}1n - o(n)$ dla funkcji podanej wzorem `[założenie]`. |
 | Poincaré | Brak. Dowód istnieje. | Nie dotyczy. | Nie dotyczy. |
 
-Każda propozycja uzupełnienia ma 3 kroki w tej kolejności:
+## Etapy uzupełnienia brakujących kroków
 
-1. Udowodnij krok w przypadku z kolumny „Przypadek na początek”.
-2. Zapisz dowód w systemie, który sprawdza dowody, i porównaj tezę formalną z tezą słowną.
-3. Uogólnij dowód na pełny brakujący krok albo wskaż własność, która blokuje uogólnienie.
+Każda lista dzieli 1 brakujący krok na etapy w kolejności wykonania. Autor nie wykonał żadnego etapu ze stanem „brak dowodu”. Hipoteza Poincarégo ma dowód, więc nie ma listy.
+
+### Riemann: nieujemność formy Weila
+
+1. Zapisz hipotezę jako nierówność: forma Weila jest nieujemna dla każdej funkcji próbnej. Stan: równoważność ma dowód `[źródło: Weil 1952]`.
+2. Udowodnij nierówność dla funkcji próbnych, których nośnik dopuszcza tylko wkład miejsca archimedesowego. Stan: Connes i Consani badają ten przypadek `[źródło: Connes, Consani 2021]`.
+3. Udowodnij nierówność dla nośnika, który dopuszcza wkład dokładnie 1 liczby pierwszej. Stan: brak dowodu `[założenie]`.
+4. Udowodnij nierówność dla nośnika z wkładem $k$ liczb pierwszych, z oszacowaniem niezależnym od $k$. Stan: brak dowodu `[założenie]`.
+5. Przejdź do granicy $k \to \infty$. Etap 5 daje hipotezę Riemanna `[założenie]`.
+
+### BSD: skończoność grupy Tate'a–Szafarewicza krzywej 389a1
+
+1. Potwierdź rangę 2 i krotność zera 2. Stan: dowód istnieje `[źródło: LMFDB]`.
+2. Oblicz grupę Selmera dla liczby pierwszej $p$. Wynik ogranicza część $p$-pierwotną grupy Tate'a–Szafarewicza. Stan: obliczenie obejmuje 1 liczbę $p$ naraz `[założenie]`.
+3. Udowodnij, że część $p$-pierwotna jest trywialna dla każdej liczby pierwszej $p$ większej niż jawna granica $B$. Stan: brak dowodu dla rangi co najmniej 2 `[założenie]`.
+4. Wykonaj etap 2 dla każdej liczby pierwszej $p \le B$. Etapy 3 i 4 dają skończoność całej grupy dla krzywej 389a1.
+5. Uogólnij etap 3 na każdą krzywą o randze co najmniej 2. Stan: brak dowodu `[założenie]`.
+
+Dla krzywych z zerem o krotności co najwyżej 1 skończoność grupy ma dowód `[źródło: Koływagin 1990]`.
+
+### Hodge: klasy typu $(2,2)$
+
+1. Ogranicz zadanie do rozmaitości abelowych typu Weila. Na ogólnej rozmaitości abelowej klasy dywizorów generują każdą klasę Hodge'a `[założenie]`.
+2. Udowodnij algebraiczność klas Weila na rozmaitościach abelowych typu Weila wymiaru 4. Stan: preprint bez potwierdzonej recenzji `[źródło: Markman 2025a]`.
+3. Wyprowadź hipotezę dla rozmaitości abelowych wymiaru co najwyżej 5. Stan: wynika z etapu 2 `[źródło: Markman 2025b]`.
+4. Udowodnij hipotezę dla rozmaitości abelowych wymiaru 6. Stan: brak dowodu poza szczególnymi rodzinami `[założenie]`.
+5. Udowodnij hipotezę dla klasy typu $(2,2)$ na każdej rozmaitości rzutowej wymiaru 4. Stan: brak dowodu `[założenie]`.
+
+### Yang–Mills: dodatni odstęp w nieskończonej objętości
+
+1. Udowodnij lukę masową na kracie przy silnym sprzężeniu. Stan: twierdzenie niesprawdzone w pracy `[założenie: Osterwalder, Seiler 1978]`.
+2. Udowodnij lukę masową w modelu $O(3)$ w 2 wymiarach przy każdej wartości sprzężenia. Stan: brak dowodu. Preprint bez recenzji sprawdza komputerowo 8 punktów sprzężenia `[źródło: Research Square]`.
+3. Udowodnij na kracie $SU(2)$ w 4 wymiarach dolne ograniczenie odstępu, które nie zależy od sprzężenia. Stan: brak dowodu `[założenie]`.
+4. Udowodnij, że ograniczenie z etapu 3 zostaje dodatnie w granicy ciągłej i dla $L \to \infty$. Stan: brak dowodu `[założenie]`.
+5. Połącz etap 4 z teorią z dowodu istnienia z 2026-10-26. Stan: dowód istnienia czeka na weryfikację `[źródło: sieć]`.
+
+### Navier–Stokes bez siły zewnętrznej
+
+1. Zdefiniuj ułamek $\theta$ dla prawdziwego równania: strumień energii przez skalę $\lambda^{-n}$ podzielony przez energię wiru $n$ `[założenie]`.
+2. Udowodnij gładkość w modelu diadycznym. Stan: dowód dla $\beta \in (2, 5/2]$ `[źródło: Barbato, Morandin, Romito 2011]`.
+3. Udowodnij ograniczenie $\sup_{t \lt T} \lVert u(t)\rVert_{L^3} \lt \infty$. Etap 3 daje gładkość `[źródło: Escauriaza, Seregin, Šverák 2003]`. Stan: brak dowodu `[założenie]`.
+4. Zbuduj dane początkowe z osobliwością: przenieś konstrukcję z równania uśrednionego na prawdziwe równanie `[źródło: Tao 2016]`. Stan: brak dowodu `[założenie]`.
+
+Dokładnie 1 z 2 etapów kończy problem: etap 3 albo etap 4.
+
+### P a NP: dolne ograniczenie liczby bramek
+
+1. Udowodnij dolne ograniczenie większe niż $3{,}1n - o(n)$ bramek dla funkcji podanej wzorem. Stan: rekord wynosi $3{,}1n - o(n)$ `[źródło: Li, Yang 2022]`.
+2. Udowodnij ograniczenie nadliniowe: liczba bramek przewyższa $cn$ dla każdej stałej $c$. Stan: brak dowodu `[założenie]`.
+3. Znajdź algorytm sprawdzania spełnialności dla obwodów progowych o głębokości 3, który wykonuje mniej kroków niż przegląd zupełny. Stan: brak algorytmu `[założenie]`. Taki algorytm daje dolne ograniczenie `[źródło: Williams 2011]`.
+4. Udowodnij dla zadania spełnialności ograniczenie, które przewyższa każdy wielomian. Etap 4 daje $P \ne NP$ (dowód 12). Stan: brak dowodu `[założenie]`.
+
+Po dowodzie etapu zapisz dowód w systemie Lean i porównaj tezę formalną z tezą słowną.
 
 ## Algorytm
 
@@ -277,7 +328,7 @@ Każdy wiersz tabeli ma znacznik `[obliczenie: skrypt]`. Sprawdziany od 9 do 12 
 | 7 | 3 | Zliczanie obwodów dla $n = 20$ | 30 986 bramek; człon $3{,}1n$: 62 bramki |
 | 8 | algorytm | Nierówność Lagariasa dla $n$ od 2 do 1 000 000 włącznie | 0 naruszeń; największy iloraz 0,9886 dla $n = 12$ |
 | 9 | 2 | Przepływ skracający krzywą: pole względem prostej $A_0 - 2\pi t$ | odchylenie 0,83 % pola początkowego; iloraz izoperymetryczny z 1,732 do 1,0008 |
-| 10 | 2 | Równania Naviera–Stokesa w 2 wymiarach, siatka 64 × 64 | enstrofia z 2,206 do 1,147; największa wirowość z 6,00 do 4,51; 0 kroków ze wzrostem |
+| 10 | 2 | Równania Naviera–Stokesa w 2 wymiarach, siatka 64 × 64 | enstrofia z 2,206 do 1,147, 0 wzrostów w 40 odstępach próbek; największa wirowość z 6,00 do 4,51, 1 wzrost o 0,25 % |
 | 11 | 2 | 32 orbity klasyczne w potencjale $x^2y^2$ o energii $E_0$ | 32 orbity poza kwadratem o boku 6; masa kwantowa poza kwadratem: 0,28 % |
 | 12 | 3 | Przeszukiwanie z nawrotami, 25 losowych formuł 3-SAT na rozmiar | mediana węzłów od 6 do 87; nachylenie 0,118 bitu na zmienną |
 | 13 | 1 | Zera funkcji $\zeta$ na prostej $\sigma = 1/2$ dla $t \lt 40$ | 6 zer; pierwsze zero $t$ = 14,135; najmniejsza wartość $\lvert\zeta\rvert$ na prostych $\sigma = 0{,}25$ i $\sigma = 0{,}75$: 0,179 |
@@ -285,9 +336,51 @@ Każdy wiersz tabeli ma znacznik `[obliczenie: skrypt]`. Sprawdziany od 9 do 12 
 
 Sprawdzian 4 używa 4 krzywych: 11a3, 37a1, 389a1, 5077a1. Hipoteza BSD przewiduje nachylenie równe randze. Wzrost iloczynu jak $(\ln X)^r$ jest hipotezą, która implikuje hipotezę Riemanna dla funkcji $L(E, s)$ `[źródło: Goldfeld 1982; Kuo, Murty 2005]`. Sprawdziany 1 i 2 są równoważne: sygnatura $(1, 3)$ zachodzi wtedy i tylko wtedy, gdy $a^2 \lt 4p$. Wartość $E_0$ = 1,10822 zgadza się z wartością $1{,}10822315759$ z literatury `[źródło: Fernández, García 2014]`.
 
+## Dowody w Lean
+
+Plik [lean/MillenniumModels/Proofs.lean](lean/MillenniumModels/Proofs.lean) zawiera 16 twierdzeń. System Lean 4 z biblioteką Mathlib sprawdza każde twierdzenie `[obliczenie: lake build]`. Twierdzenie w Lean obejmuje rdzeń algebraiczny albo rdzeń logiczny dowodu z sekcji „Najkrótsze dowody”. Fakty z geometrii i z analizy wchodzą do twierdzenia jako założenia. Żadne twierdzenie w Lean nie dotyczy problemu otwartego. Żadne twierdzenie nie zawiera słowa `sorry`. Każde twierdzenie zależy co najwyżej od 3 aksjomatów: `propext`, `Classical.choice`, `Quot.sound`.
+
+| Dowód | Twierdzenie w Lean | Założenie twierdzenia |
+|---|---|---|
+| 1 | `hasse_bound` | Forma $r^2 + ars + ps^2$ jest nieujemna dla każdej pary liczb $r$, $s$. |
+| 2 | `class_comes_from_pic` | Ciąg 3 grup jest dokładny. |
+| 3 | `sphere_radius`, `sphere_vanishes` | Funkcja $r^2(t)$ ma pochodną $-4$ w każdej chwili. |
+| 4 | `two_h_bound` | 2 nierówności oscylatora zachodzą dla wartości średnich w 1 stanie. |
+| 5 | `certificate`, `adversary`, `fewer_queries_fail` | Brak. |
+| 6 | `counting`, `card_boolean_functions` | Obwodów jest mniej niż funkcji. |
+| 7 i 8 | `search_halts` | Świadek istnieje. |
+| 9 | `undecided_pi1_is_true` | Każdy kontrprzykład daje obalenie w teorii. |
+| 10 | `no_recogniser`, `halting_problem` | Algorytm rozpoznawania daje procedurę dla problemu stopu. |
+| 11 | `reynolds_step` | Krok 2 dowodu 11: $U_{n+1}^2 = \theta \lambda^d U_n^2$. |
+| 12 | `missing_step_gives_p_ne_np` | Algorytm wielomianowy daje obwody o wielomianowej liczbie bramek. |
+
+Program [lean/Figure.lean](lean/Figure.lean) w języku Lean 4 liczy punkty krzywej $y^2 + y = x^3 - x$ nad ciałem $F_p$ dla 45 liczb pierwszych $p \lt 200$. Program rysuje plik SVG. Jeżeli co najmniej 1 ślad narusza nierówność $a^2 \le 4p$, to program kończy pracę błędem.
+
+![Punkty (p, a) dla 45 liczb pierwszych p < 200 leżą wewnątrz paraboli a² = 4p. Rysunek z programu w języku Lean 4.](figures/lean-hasse-bound.svg)
+
+Wersje: Lean `v4.36.0-rc2` i Mathlib `v4.36.0-rc2`. Biblioteka Mathlib zajmuje 7,3 GB na dysku `[pomiar: du, 2026-11-13]`.
+
+## Symulacje w języku MATLAB
+
+Katalog [matlab](matlab) zawiera 3 symulacje w języku MATLAB i skrypt `run_all.m`. Program GNU Octave 11.3.0 uruchamia każdy plik. Skrypt `run_all.m` porównuje liczby z raportem i kończy pracę błędem przy różnicy. Autor nie uruchomił plików w programie MATLAB.
+
+| Plik | Sprawdzian | Liczby z programu GNU Octave |
+|---|---|---|
+| `x2y2_levels.m` | 5 | $E_0$ = 1,10822; $E_1$ = 2,37864; $E_1 - E_0$ = 1,27041; granica dolna 1,0188 |
+| `curve_shortening.m` | 9 | odchylenie pola 0,83 %; iloraz izoperymetryczny z 1,732 do 1,0008 |
+| `vorticity_2d.m` | 10 | enstrofia z 2,206 do 1,147; największa wirowość z 6,00 do 4,51; 1 wzrost o 0,25 % |
+
+Plik `x2y2_levels.m` liczy granicę dolną inną metodą niż skrypt `models_check.py`: z zera pochodnej funkcji Airy'ego `[źródło: DLMF §9.9]`. Plik `vorticity_2d.m` czyta pole początkowe z pliku `vorticity_initial.csv`. Plik `vorticity_initial.csv` zapisał skrypt `simulations.py`.
+
+![Powierzchnia gęstości stanu podstawowego hamiltonianu z potencjałem x²y²: gęstość skupia się w środku. Rysunek z programu GNU Octave.](figures/octave-x2y2-ground-state.png)
+
+![Lewy panel: krzywa w 5 chwilach staje się okręgiem. Prawy panel: pole z symulacji leży na prostej teoretycznej. Rysunek z programu GNU Octave.](figures/octave-curve-shortening.png)
+
+![Pole wirowości w chwili 0 i w chwili 8 oraz enstrofia, która maleje z 2,206 do 1,147. Skala barw obejmuje wartości od −6 do 6. Rysunek z programu GNU Octave.](figures/octave-vorticity-2d.png)
+
 ## Rysunki interaktywne
 
-Plik [docs/index.html](docs/index.html) zawiera 14 rysunków interaktywnych z biblioteki plotly. Wskazanie znaku na rysunku pokazuje liczby. 5 rysunków w 3 wymiarach obraca się myszą, a 2 rysunki mają suwak czasu. Strona pobiera biblioteki plotly.js i MathJax z sieci. Rysunki z katalogu `figures` powstają w bibliotekach matplotlib i seaborn.
+Plik [docs/index.html](docs/index.html) zawiera 14 rysunków interaktywnych z biblioteki plotly. Wskazanie znaku na rysunku pokazuje liczby. Strona ma adres [maciejszulia.github.io/millennium-models](https://maciejszulia.github.io/millennium-models/). 5 rysunków w 3 wymiarach obraca się myszą, a 2 rysunki mają suwak czasu. Strona pobiera biblioteki plotly.js i MathJax z sieci. Rysunki z katalogu `figures` powstają w bibliotekach matplotlib i seaborn.
 
 ## Uproszczenia
 
@@ -316,14 +409,14 @@ Każdy punkt jest propozycją zastosowania, bez wdrożenia.
 1. Kryptografia krzywych eliptycznych: dobór krzywej wymaga liczby punktów $N$ i granicy $a^2 \le 4p$. Sprawdzian 1 liczy obie wielkości `[założenie]`.
 2. Kryptografia z kluczem publicznym zakłada zdanie $P \ne NP$ `[założenie]`. Model zapytań pokazuje metody dowodu, które nie rozstrzygają zdania $P \ne NP$.
 3. Nauczanie: 1 problem dostaje co najmniej 2 rysunki i 1 dowód z co najwyżej 4 wierszy.
-4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 23 liczby z raportem i kończy pracę błędem przy różnicy.
+4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 24 liczby z raportem i kończy pracę błędem przy różnicy.
 5. Symulacje przepływów: liczba $\mathrm{Re}_n$ wskazuje skalę, na której siatka obliczeniowa wymaga zagęszczenia `[założenie]`.
 6. Metody wariacyjne w fizyce: hamiltonian $-\Delta + x^2y^2$ daje poziom $E_0$ z 5 cyframi oraz granicę dolną do porównań `[obliczenie: skrypt]`.
-7. Sprawdzanie dowodów: wątek dowodów jest programem, który sprawdza dowody. Formalizacje z 2026 r. używają systemu Lean `[źródło: sieć]`.
+7. Sprawdzanie dowodów: wątek dowodów jest programem, który sprawdza dowody. Formalizacje z 2026 r. używają systemu Lean `[źródło: sieć]`. Repozytorium zawiera 16 twierdzeń w Lean.
 
 ## Problematyka
 
-1. Sprawdzian obejmuje skończoną liczbę przypadków. Sprawdzian nie jest dowodem. Symulacja przybliża ruch z błędem kroku czasu.
+1. Sprawdzian obejmuje skończoną liczbę przypadków. Sprawdzian nie jest dowodem. Symulacja przybliża ruch z błędem dyskretyzacji. Przykład: symulacja 10 pokazuje 1 wzrost największej wirowości o 0,25 %.
 2. Autor nie udowodnił żadnego brakującego kroku. Sekcja „Propozycje uzupełnienia brakujących kroków” podaje plany.
 3. Algorytm 2 wątków nie rozpoznaje braku rozstrzygnięcia w teorii (dowód 10).
 4. Wątek dowodów ma koszt wykładniczy, więc algorytm 2 wątków nie nadaje się do praktycznego szukania dowodów.
@@ -339,6 +432,8 @@ Każdy punkt jest propozycją zastosowania, bez wdrożenia.
 14. Formalizacja dowodu w systemie Lean nie gwarantuje zgodności z tezą słowną. Praca z 2026-10-06 zarzuca taką niezgodność 1 formalizacji `[źródło: sieć]`.
 15. Rysunek torusa pokazuje przekrój rzeczywisty modelu 1. Powierzchnia $E \times E$ ma 4 wymiary rzeczywiste i nie ma rysunku.
 16. Rysunki 3 wymiarów na stronie interaktywnej wymagają przeglądarki z WebGL.
+17. Twierdzenie w Lean obejmuje rdzeń dowodu. Lean nie sprawdza założeń z geometrii i z analizy.
+18. Autor nie uruchomił plików z katalogu `matlab` w programie MATLAB. Wynik z programu GNU Octave nie gwarantuje wyniku w programie MATLAB.
 
 ## Dyskusja
 
@@ -361,8 +456,11 @@ Wykonaj każdy krok w tej kolejności:
 4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 14 plików PNG z tego skryptu.
 5. Narysuj animacje: `.venv/bin/python animations.py`. Wynik: katalog `figures` zawiera 3 pliki GIF i 1 plik PNG z tego skryptu.
 6. Zbuduj stronę interaktywną: `.venv/bin/python interactive.py`. Wynik: plik `docs/index.html`.
+7. Sprawdź dowody w Lean. W katalogu `lean` wykonaj `lake exe cache get`, a potem `lake build`. Wynik: wiersz `Build completed successfully`.
+8. Narysuj rysunek z Lean. W katalogu `lean` wykonaj `lake exe figure > ../figures/lean-hasse-bound.svg`.
+9. Uruchom symulacje w GNU Octave: `docker run --rm -v "$PWD":/work -w /work gnuoctave/octave:11.3.0 octave-cli matlab/run_all.m`. Wynik: wiersz `all octave checks passed`.
 
-Skrypt `models_check.py` porównuje 23 liczby z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
+Skrypt `models_check.py` porównuje 24 liczby z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
 
 Czasy pracy 4 skryptów: `models_check.py` 23 s, `figures.py` 27 s, `animations.py` 66 s, `interactive.py` 24 s `[pomiar: 1 przebieg, 2026-11-13, laptop autora z 8 wątkami procesora]`.
 
@@ -379,6 +477,8 @@ Czasy pracy 4 skryptów: `models_check.py` 23 s, `figures.py` 27 s, `animations.
 | 7 | kolejność sekcji | A4 | Sekcja „Najkrótsze dowody” stoi przed definicjami oznaczeń. | Odstępstwo od reguły A4. Streszczenie i dowody stoją na początku, a dowody odsyłają do sekcji z definicjami. |
 | 8 | „brak rozwiązania” | A4 | 2 znaczenia: teza jest fałszywa; teoria nie rozstrzyga tezy. | Algorytm stwierdza tylko fałszywość tezy. Dowód 10 wyklucza algorytm dla drugiego znaczenia. |
 | 9 | „uzupełnienie brakującego kroku” | A4 | 2 znaczenia: dowód kroku; plan dowodu kroku. | Plan dowodu kroku. Autor nie zna dowodu żadnego brakującego kroku. |
+| 10 | „liczebniki” | A4 | 3 znaczenia: ponumerowane etapy kroków; liczby słownie; liczebniki w Lean. | Ponumerowane etapy kroków. Decyzja autora z 2026-11-13. |
+| 11 | „symulacje w MATLAB” | A5 | Komputer autora nie ma programu MATLAB. | Pliki w języku MATLAB uruchamia program GNU Octave 11.3.0. Decyzja autora z 2026-11-13. |
 
 Raport stosuje reguły standardu Polszczyzna Kontrolowana (PK) 0.1. Kolumna „Reguła” podaje numer reguły PK.
 

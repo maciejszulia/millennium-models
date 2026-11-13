@@ -61,19 +61,28 @@ def curve_shortening(points=160, frames=60, stop=0.9):
 # --- Navier-Stokes in two dimensions: vorticity on a torus, pseudo-spectral ---
 
 
+def _wavenumbers(n):
+    k = np.fft.fftfreq(n, 1 / n)
+    kx, ky = np.meshgrid(k, k, indexing="ij")
+    return kx, ky, kx**2 + ky**2, (np.abs(kx) < n / 3) & (np.abs(ky) < n / 3)
+
+
+def initial_vorticity(n=64, seed=3):
+    """Smooth random vortices with max |w| = 6. matlab/vorticity_initial.csv stores this field for n = 64, seed = 3."""
+    _, _, k2, keep = _wavenumbers(n)
+    w = np.fft.ifft2(np.fft.fft2(np.random.default_rng(seed).standard_normal((n, n))) * np.exp(-k2 / 8) * keep).real
+    return 6 * w / np.abs(w).max()
+
+
 def vorticity_2d(n=64, viscosity=0.01, steps=400, dt=0.02, every=10, seed=3):
     """Vorticity equation w_t + u.grad(w) = viscosity * laplace(w) on [0, 2*pi)^2, RK4, 2/3 dealiasing.
 
     Theorems for two dimensions without forcing: energy, enstrophy and max |w| never grow.
     Returns times, energies, enstrophies, max |w| and the stored vorticity fields.
     """
-    k = np.fft.fftfreq(n, 1 / n)
-    kx, ky = np.meshgrid(k, k, indexing="ij")
-    k2 = kx**2 + ky**2
+    kx, ky, k2, keep = _wavenumbers(n)
     inv = np.divide(1.0, k2, out=np.zeros_like(k2), where=k2 > 0)
-    keep = (np.abs(kx) < n / 3) & (np.abs(ky) < n / 3)
-    w = np.fft.ifft2(np.fft.fft2(np.random.default_rng(seed).standard_normal((n, n))) * np.exp(-k2 / 8) * keep).real
-    w_hat = np.fft.fft2(6 * w / np.abs(w).max()) * keep  # smooth random vortices with max |w| = 6
+    w_hat = np.fft.fft2(initial_vorticity(n, seed)) * keep
 
     def velocity(w_hat):
         psi = w_hat * inv  # laplace(psi) = -w
