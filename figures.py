@@ -17,7 +17,10 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.lines import Line2D
 
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
 import models_check as mc
+import simulations as sim
 from models_check import pl, thousands
 
 OUT = Path(__file__).parent / "figures"
@@ -51,10 +54,11 @@ def comma_ticks(axis, nd=2):
     axis.set_major_formatter(lambda v, _: pl(v, nd))
 
 
-def frame(title, subtitle, footer, ncols=1, width_ratios=None, sharey=False, height=5.4):
+def frame(title, subtitle, footer, ncols=1, width_ratios=None, sharey=False, height=5.4, projection=None):
     """Figure whose title is the finding, subtitle is what is drawn, footer is the source."""
     fig, axes = plt.subplots(1, ncols, figsize=(9.6, height), sharey=sharey,
-                             gridspec_kw={"width_ratios": width_ratios})
+                             gridspec_kw={"width_ratios": width_ratios},
+                             subplot_kw={"projection": projection} if projection else None)
     unit = 5.4 / height  # text sizes are fixed in points, so the margins shrink as the figure grows
 
     def up(t):  # a position given for the default height, measured from the top edge
@@ -117,9 +121,9 @@ def figure_riemann():
     save(fig, "riemann-hasse-bound.png")
 
 
-def figure_bsd():
-    primes, series = mc.bsd_series()
-    summary = mc.bsd_products(data=(primes, series))
+def figure_bsd(data):
+    primes, series = data
+    summary = mc.bsd_products(data=data)
     slopes = [summary[name][2] for name in mc.CURVES]
     fig, (ax,) = frame(
         "Nachylenie iloczynu rośnie z rangą krzywej: " + "; ".join(pl(s) for s in slopes),
@@ -422,6 +426,143 @@ def figure_algorithm():
     save(fig, "algorithm-two-threads.png")
 
 
+def quiet_3d(ax, elev, azim):
+    """Panes in the surface colour, a fixed view and manual draw order for a 3D axes."""
+    for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+        axis.set_pane_color(SURFACE)
+    ax.computed_zorder = False
+    ax.view_init(elev=elev, azim=azim)
+
+
+def figure_zeta_surface():
+    zeros, off_line = mc.check_zeta()
+    sigma, t = np.linspace(0, 1, 41), np.linspace(10, 40, 301)
+    s_grid, t_grid = np.meshgrid(sigma, t)
+    fig, (ax,) = frame(
+        f"{len(zeros)} zer funkcji dzeta dla t od 10 do 40 leży na prostej " + r"$\sigma = 1/2$",
+        r"Powierzchnia $|\zeta(\sigma + it)|$ nad pasem $0 \leq \sigma \leq 1$. Punkty pomarańczowe: zera. "
+        r"Linia czarna: prosta $\sigma = 1/2$.",
+        r"Źródło: models_check.py, sprawdzian 13. Najmniejsza wartość $|\zeta|$ na prostych $\sigma = 0{,}25$ "
+        rf"i $\sigma = 0{{,}}75$ wynosi {pl(off_line, 3)}.",
+        projection="3d", height=6.6,
+    )
+    quiet_3d(ax, 34, -56)
+    ax.plot_surface(s_grid, t_grid, np.abs(mc.zeta(s_grid + 1j * t_grid)), cmap=SEQ, linewidth=0, rcount=150,
+                    ccount=41, zorder=1)
+    ax.plot(np.full(t.size, 0.5), t, np.abs(mc.zeta(0.5 + 1j * t)), color=INK, lw=1.2, zorder=2)
+    ax.scatter(np.full(len(zeros), 0.5), zeros, np.zeros(len(zeros)), s=42, color=ORANGE, edgecolors=SURFACE,
+               linewidths=RING, depthshade=False, zorder=3)
+    ax.set(xlabel=r"$\sigma$", ylabel="t", zlabel=r"$|\zeta|$")
+    comma_ticks(ax.xaxis, 1)
+    save(fig, "riemann-zeta-surface.png")
+
+
+def figure_torus(multiplier=3):
+    big, small = 2.0, 0.8
+
+    def embed(u, v):
+        return (big + small * np.cos(v)) * np.cos(u), (big + small * np.cos(v)) * np.sin(u), small * np.sin(v)
+
+    fig, (ax,) = frame(
+        f"Przekątna D przecina wykres G odwzorowania x → {multiplier}x w {multiplier - 1} punktach:\n"
+        "punkty stałe odwzorowania są przecięciami krzywych",
+        "Torus z 4 krzywymi modelu 1 w przekroju rzeczywistym: krzywa E jest tutaj okręgiem, a powierzchnia E × E "
+        "torusem.\nPunkty czarne: przecięcia krzywych D i G, czyli punkty stałe odwzorowania.",
+        f"Źródło: wzór modelu 1. W przekroju rzeczywistym (D, G) = {multiplier - 1}. Na krzywej eliptycznej "
+        f"(D, G) = {(multiplier - 1) ** 2}, bo odwzorowanie x → x − {multiplier}x ma stopień {(multiplier - 1) ** 2}.",
+        projection="3d", height=6.6,
+    )
+    quiet_3d(ax, 38, -62)
+    u, v = np.meshgrid(np.linspace(0, 2 * np.pi, 80), np.linspace(0, 2 * np.pi, 40))
+    ax.plot_surface(*embed(u, v), color="#cde2fb", alpha=0.3, linewidth=0, shade=False, zorder=1)
+    s = np.linspace(0, 2 * np.pi, 800)
+    curves = (("H = E × {punkt}", s, 0 * s, MUTED, 1.4), ("V = {punkt} × E", 0 * s, s, INK2, 1.4),
+              ("D = przekątna", s, s, BLUE, 2.2), (f"G = wykres x → {multiplier}x", s, multiplier * s, ORANGE, 2.2))
+    for label, cu, cv, color, width in curves:
+        ax.plot(*embed(cu, cv), color=color, lw=width, label=label, zorder=2)
+    fixed = 2 * np.pi * np.arange(multiplier - 1) / (multiplier - 1)
+    ax.scatter(*embed(fixed, fixed), s=60, color=INK, edgecolors=SURFACE, linewidths=RING, depthshade=False,
+               zorder=3, label="punkt stały")
+    ax.set_box_aspect((1, 1, 0.42))
+    ax.set_axis_off()
+    ax.legend(loc="upper left", bbox_to_anchor=(0.0, 0.98))
+    save(fig, "model-1-torus-curves.png")
+
+
+def figure_potential_3d():
+    _, levels, _ = mc.check_x2y2()
+    x = np.linspace(-4, 4, 241)
+    gx, gy = np.meshgrid(x, x)
+    potential = gx**2 * gy**2
+    fig, (ax,) = frame(
+        rf"Doliny potencjału $x^2y^2$ mają dno na wysokości 0, a poziom podstawowy ma wysokość {pl(levels[0], 3)}",
+        "Powierzchnia potencjału, obcięta na wysokości 2: 4 ramiona dolin (jasne) biegną wzdłuż 2 osi "
+        "i nie zamykają się.\nLinia czarna: poziom podstawowy $E_0$.",
+        "Źródło: models_check.py, sprawdzian 5. Orbity klasyczne w dolinach pokazuje animacja ze sprawdzianu 11.",
+        projection="3d", height=6.6,
+    )
+    quiet_3d(ax, 62, -58)
+    ax.plot_surface(gx, gy, np.minimum(potential, 2), cmap=SEQ, vmin=0, vmax=2.6, linewidth=0, rcount=120,
+                    ccount=120, zorder=1)
+    ax.contour(gx, gy, potential, levels=[levels[0]], colors=[INK], linewidths=1.3, zorder=2)
+    ax.set(xlabel="x", ylabel="y", zlabel=r"$x^2y^2$", zlim=(0, 2))
+    ax.set_zticks([0, 1, 2])
+    save(fig, "yang-mills-potential-3d.png")
+
+
+def figure_cube():
+    _, queries, certificate = mc.check_queries(3)[-1]
+    corners = [(a, b, c) for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+    fig, (ax,) = frame(
+        f"Odpowiedź 1 funkcji OR ma certyfikat o {certificate} bicie, a odpowiedź 0 wymaga {queries} zapytań",
+        "Sześcian 8 wejść o 3 bitach. Punkt pełny: wartość 1. Punkt pusty: wartość 0. "
+        "Ściana niebieska: 4 wejścia z pierwszym bitem 1.\n"
+        "Krawędzie pomarańczowe: 3 zmiany dokładnie 1 bitu, które zmieniają wartość funkcji z 0 na 1.",
+        "Źródło: models_check.py, sprawdzian 6 dla n = 3. Napis przy wierzchołku podaje 3 bity wejścia.",
+        projection="3d", height=6.6,
+    )
+    quiet_3d(ax, 22, -58)
+    ax.add_collection3d(Poly3DCollection([[(1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 0, 1)]], facecolor=BLUE, alpha=0.14,
+                                         edgecolor="none", zorder=1))
+    for i, a in enumerate(corners):
+        for b in corners[i + 1 :]:
+            if sum(p != q for p, q in zip(a, b)) == 1:
+                at_zero = (0, 0, 0) in (a, b)
+                ax.plot(*zip(a, b), color=ORANGE if at_zero else MUTED, lw=2.4 if at_zero else 1.0, zorder=2)
+    ones = [c for c in corners if any(c)]
+    ax.scatter(*zip(*ones), s=90, color=BLUE, edgecolors=SURFACE, linewidths=RING, depthshade=False, zorder=3)
+    ax.scatter([0], [0], [0], s=90, color=SURFACE, edgecolors=ORANGE, linewidths=2.2, depthshade=False, zorder=3)
+    for c in corners:
+        shift = 0.06 if any(c) else -0.14  # the label of 000 moves away from the orange edges
+        ax.text(c[0] + shift, c[1] + shift, c[2] + shift, "".join(map(str, c)), fontsize=9, color=INK2, zorder=4)
+    ax.set_box_aspect((1, 1, 1))
+    ax.set_axis_off()
+    save(fig, "p-vs-np-cube.png")
+
+
+def figure_sato_tate(data):
+    import seaborn as sns
+
+    distance, values = mc.sato_tate_distance(data)
+    grid = np.linspace(-1, 1, 400)
+    fig, (ax,) = frame(
+        rf"Wartości $a/(2\sqrt{{p}})$ krzywej 37a1 wypełniają przedział od −1 do 1 według rozkładu półokręgu",
+        f"Histogram {thousands(values.size)} wartości dla liczb pierwszych p od 3 do 99 991. "
+        r"Linia: gęstość $\frac{2}{\pi}\sqrt{1 - x^2}$." "\n"
+        "Nierówność Hassego oznacza, że żadna wartość nie leży poza przedziałem.",
+        "Źródło: models_check.py, sprawdzian 14. Największa różnica dystrybuanty z danych i dystrybuanty "
+        f"rozkładu półokręgu wynosi {pl(distance, 4)}.",
+    )
+    sns.histplot(x=values, bins=40, stat="density", color=BLUE, edgecolor=SURFACE, linewidth=1.2, alpha=1, ax=ax)
+    ax.plot(grid, 2 / np.pi * np.sqrt(1 - grid**2), color=INK2, lw=LINE, label="rozkład półokręgu")
+    ax.set(xlim=(-1.08, 1.08), xlabel=r"$a/(2\sqrt{p})$", ylabel="gęstość")
+    ax.set_xticks([-1, -0.5, 0, 0.5, 1])
+    comma_ticks(ax.xaxis, 1)
+    comma_ticks(ax.yaxis, 1)
+    ax.legend(loc="upper right")
+    save(fig, "bsd-sato-tate.png")
+
+
 if __name__ == "__main__":
     style()
     figure_algorithm()
@@ -432,4 +573,10 @@ if __name__ == "__main__":
     figure_yang_mills()
     figure_navier_stokes()
     figure_p_vs_np()
-    figure_bsd()  # last: about 1 minute
+    figure_zeta_surface()
+    figure_torus()
+    figure_potential_3d()
+    figure_cube()
+    data = mc.bsd_series()
+    figure_bsd(data)
+    figure_sato_tate(data)

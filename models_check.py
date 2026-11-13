@@ -286,6 +286,20 @@ def bsd_products(xmax=100_000, data=None):
     return out
 
 
+def sato_tate_distance(data=None, name="37a1"):
+    """Check 14: Kolmogorov distance between a_p / (2 sqrt p) of one curve and the semicircle law.
+
+    Returns the distance and the sorted values; the bad prime is left out.
+    """
+    primes, series = data or bsd_series()
+    counts = np.rint(primes * np.exp(np.diff(series[name], prepend=0.0)))  # N_p back from log(N_p / p)
+    keep = primes != CURVES[name][3]
+    x = np.sort((primes[keep] + 1 - counts[keep]) / (2 * np.sqrt(primes[keep])))
+    assert np.abs(x).max() < 1  # Hasse
+    law = 0.5 + (x * np.sqrt(1 - x * x) + np.arcsin(x)) / np.pi
+    return float(np.abs(np.arange(1, x.size + 1) / x.size - law).max()), x
+
+
 # --- Model 2, check 5: x^2 y^2 quantum mechanics (Yang-Mills fields in a small box) ---
 
 
@@ -417,6 +431,69 @@ def check_lagarias(ratios=None):
     return len(ratios), worst, float(ratios[worst - 1])
 
 
+# --- Checks 9 to 12: the simulations; check 13: the zeta function behind the 3D figure ---
+
+
+def check_simulations():
+    """Numbers of the four simulations, each asserted against a theorem or a stated expectation."""
+    import simulations as sim
+
+    times, areas, ratios, _ = sim.curve_shortening()
+    area_error = float(np.abs(areas - (areas[0] - 2 * np.pi * times)).max() / areas[0])
+    assert area_error < 0.015 and ratios[-1] < 1.01 < ratios[0], (area_error, ratios[0], ratios[-1])  # check 9
+    _, energies, enstrophies, peaks, _ = sim.vorticity_2d()
+    assert np.diff(enstrophies).max() <= 0 and np.diff(energies).max() <= 0, "enstrophy and energy must not grow"
+    assert peaks.max() <= peaks[0] * (1 + 1e-9), peaks.max()  # check 10: maximum principle
+    assert abs(x2y2_levels(20, 0, 0)[0] - sim.GROUND_LEVEL) < 1e-5  # the orbits start with the energy E0
+    path, drift = sim.classical_x2y2()
+    reach = np.abs(path).max(axis=(1, 2))
+    time_outside = float((np.abs(path).max(axis=2) > 3).mean())
+    mass_outside = sim.quantum_mass_outside(20, 3)
+    assert reach.min() > 3 and mass_outside < 0.01 and drift < 0.01, (reach.min(), mass_outside, drift)  # check 11
+    sizes, medians, slope = sim.sat_search()
+    assert slope > 0.05 and medians[-1] > 4 * medians[0], (slope, medians)  # check 12: exponential growth
+    return {
+        "area_error": area_error, "ratio_start": float(ratios[0]), "ratio_end": float(ratios[-1]),
+        "enstrophy_start": float(enstrophies[0]), "enstrophy_end": float(enstrophies[-1]),
+        "peak_start": float(peaks[0]), "peak_end": float(peaks[-1]),
+        "orbits": int(reach.size), "orbits_at_limit": int((reach >= 30).sum()), "reach_min": float(reach.min()),
+        "time_outside": time_outside, "mass_outside": mass_outside,
+        "sat_sizes": sizes, "sat_medians": medians, "sat_slope": slope,
+    }
+
+
+def zeta(s, terms=120):
+    """Riemann zeta on an array of complex s with Re s >= 0, s != 1 (Borwein's alternating series)."""
+    d, acc = [], Fraction(0)
+    for i in range(terms + 1):
+        acc += Fraction(math.factorial(terms + i - 1) * 4**i, math.factorial(terms - i) * math.factorial(2 * i))
+        d.append(terms * acc)
+    s = np.asarray(s, dtype=complex)
+    total = np.zeros(s.shape, dtype=complex)
+    for k in range(terms):
+        total += (-1) ** k * float((d[k] - d[terms]) / d[terms]) * np.exp(-s * math.log(k + 1))
+    return -total / (1 - 2.0 ** (1 - s))
+
+
+def zeta_zeros_on_line(tmax=40.0, step=0.001):
+    """Heights t <= tmax where |zeta(1/2 + i*t)| has a local minimum below 0.01."""
+    t = np.arange(step, tmax, step)
+    size = np.abs(zeta(0.5 + 1j * t))
+    low = (size[1:-1] < size[:-2]) & (size[1:-1] < size[2:]) & (size[1:-1] < 0.01)
+    return [float(v) for v in t[1:-1][low]]
+
+
+def check_zeta():
+    known = [14.134725, 21.022040, 25.010858, 30.424876, 32.935062, 37.586178]  # first zeros, to 6 places
+    assert abs(zeta(2.0) - np.pi**2 / 6) < 1e-12
+    zeros = zeta_zeros_on_line()
+    assert len(zeros) == len(known) and all(abs(a - b) < 2e-3 for a, b in zip(zeros, known)), zeros
+    t = np.arange(0.5, 40, 0.01)
+    off_line = float(min(np.abs(zeta(sigma + 1j * t)).min() for sigma in (0.25, 0.75)))
+    assert off_line > 0.05, off_line  # no zero on these two lines for t < 40
+    return zeros, off_line
+
+
 if __name__ == "__main__":
     t0 = time.time()
     curves, pairs, worst = check_hasse_via_hodge_index()
@@ -426,7 +503,10 @@ if __name__ == "__main__":
     for name, (dh, dc) in check_hodge_on_torus().items():
         print(f"[check 3] E x E over C, {name}: rational (1,1) classes = {dh}, spanned by curves = {dc}")
     t1 = time.time()
-    bsd = bsd_products()
+    data = bsd_series()
+    bsd = bsd_products(data=data)
+    distance, _ = sato_tate_distance(data)
+    assert distance < 0.03, distance
     for name, (r, marks, slope) in bsd.items():
         print(f"[check 4] {name:7s} rank {r}: log prod N_p/p at X=1e3, 1e4, 1e5 = "
               f"{marks[0]:+.3f}, {marks[1]:+.3f}, {marks[2]:+.3f}; slope vs log log X = {slope:.2f}")
@@ -443,12 +523,29 @@ if __name__ == "__main__":
               f"best explicit bound 3.1*n = {3.1 * n:.0f}")
     nmax, worst_n, worst_ratio = check_lagarias()
     print(f"[check 8] Lagarias inequality, n = 2..{nmax}: 0 violations; largest ratio {worst_ratio:.4f} at n = {worst_n}")
+    sim = check_simulations()
+    print(f"[check 9] curve shortening: area error {100 * sim['area_error']:.2f} % of the first area; "
+          f"isoperimetric ratio {sim['ratio_start']:.3f} -> {sim['ratio_end']:.4f}")
+    print(f"[check 10] vorticity in 2 dimensions: enstrophy {sim['enstrophy_start']:.3f} -> {sim['enstrophy_end']:.3f}; "
+          f"max |w| {sim['peak_start']:.2f} -> {sim['peak_end']:.2f}; neither grows")
+    print(f"[check 11] classical orbits of x^2 y^2: {sim['orbits']} of {sim['orbits']} leave the square 3, "
+          f"{sim['orbits_at_limit']} reach 30; time outside {100 * sim['time_outside']:.0f} %; "
+          f"quantum mass outside {100 * sim['mass_outside']:.2f} %")
+    print(f"[check 12] random 3-SAT search: median nodes {sim['sat_medians']}; slope {sim['sat_slope']:.3f} bits per variable")
+    zeros, off_line = check_zeta()
+    print(f"[check 13] zeta: {len(zeros)} zeros on the line for t < 40 at {', '.join(f'{z:.3f}' for z in zeros)}; "
+          f"min |zeta| on the lines 0.25 and 0.75: {off_line:.3f}")
+    print(f"[check 14] Sato-Tate for 37a1: distance to the semicircle law {distance:.4f}")
     report = Path(__file__).with_name("REPORT.md")
     if report.exists():  # the report must quote the numbers computed above
         quoted = [thousands(curves), str(pairs), pl(worst, 4), *(pl(v[2]) for v in bsd.values()),
                   pl(levels[0], 5), pl(levels[1], 5), pl(levels[1] - levels[0], 5), pl(bound, 4),
-                  thousands(shannon_min_gates(20)), thousands(nmax), pl(worst_ratio, 4)]
-        missing = [q for q in quoted if q not in report.read_text(encoding="utf-8")]
+                  thousands(shannon_min_gates(20)), thousands(nmax), pl(worst_ratio, 4),
+                  pl(100 * sim["area_error"], 2), pl(sim["ratio_end"], 4), pl(sim["enstrophy_start"], 3),
+                  pl(sim["enstrophy_end"], 3), pl(100 * sim["mass_outside"], 2), pl(sim["sat_slope"], 3),
+                  pl(zeros[0], 3), pl(off_line, 3), pl(distance, 4)]
+        text = report.read_text(encoding="utf-8").replace("{,}", ",")  # LaTeX decimal comma
+        missing = [q for q in quoted if q not in text]
         assert not missing, f"REPORT.md does not quote: {missing}"
         print(f"[report] REPORT.md quotes all {len(quoted)} computed numbers")
     print(f"all checks passed in {time.time() - t0:.0f} s")
