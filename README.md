@@ -55,7 +55,7 @@ Brakujący krok: odpowiednik powierzchni $E \times E$ z formą przecięcia dla p
 
 ![Powierzchnia modułu funkcji dzeta nad pasem krytycznym: 6 zer leży na prostej σ = 1/2.](figures/riemann-zeta-surface.png)
 
-Etap 3 brakującego kroku: forma Weila jest nieujemna, gdy do formy wchodzi tylko liczba 2. Sprawdzian 15 nie zastępuje dowodu, bo obejmuje tylko 20 funkcji bazowych.
+Etap 3 brakującego kroku: forma Weila jest nieujemna, gdy do formy wchodzi tylko liczba 2. Sprawdzian 15 nie zastępuje dowodu, bo obejmuje tylko 20 funkcji bazowych. Dowód komputerowy etapu 3 podaje preprint X. Zhu z 2026 r. ([arXiv:2608.24827](https://arxiv.org/abs/2608.24827)).
 
 ![Najmniejsza wartość własna formy Weila w zależności od długości nośnika L, w skali logarytmicznej, dla 12 i 20 funkcji bazowych. Wartość spada z 3,22 × 10⁻³ dla L = ln 2 do 4,97 × 10⁻⁷ dla L = ln 3 i do wartości mniejszej niż 10⁻¹² po wejściu liczby 5.](figures/riemann-weil-positivity.png)
 
