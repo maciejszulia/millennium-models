@@ -1,14 +1,14 @@
-# Minimalne modele 7 problemów milenijnych: 3 modele, 7 propozycji, 15 sprawdzianów, 1 algorytm
+# Minimalne modele 7 problemów milenijnych: 3 modele, 7 propozycji, 16 sprawdzianów, 1 algorytm
 
 Maciej Szulia, maciej.szulia@gmail.com
 
-Raport opisuje stan z dnia 2026-11-13. Sprawdzian 15, rysunek formy Weila i ogłoszenie dowodu z 2026-11-20 opisują stan z dnia 2026-11-20.
+Raport opisuje stan z dnia 2026-11-13. Sprawdziany 15 i 16, rysunek formy Weila, rysunek metody Stepanova i ogłoszenie dowodu z 2026-11-20 opisują stan z dnia 2026-11-20.
 
 **OSTRZEŻENIE:** Nie cytuj żadnej propozycji z raportu jako dowodu. Każda propozycja dla problemu otwartego ma brakujący krok, którego dowodu autor nie zna.
 
 ## Streszczenie
 
-Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 `[obliczenie: skrypt]`. Sprawdzian 15 liczy formę Weila, do której wchodzi tylko liczba pierwsza 2: na 20 funkcjach bazowych forma jest dodatnia `[obliczenie: skrypt]`. 4 symulacje i 23 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
+Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 `[obliczenie: skrypt]`. Sprawdzian 15 liczy formę Weila, do której wchodzi tylko liczba pierwsza 2: na 20 funkcjach bazowych forma jest dodatnia `[obliczenie: skrypt]`. Sprawdzian 16 pokazuje metodę Stepanova: zera wysokiego rzędu ograniczają liczbę punktów krzywej bez geometrii `[obliczenie: skrypt]`. 4 symulacje i 24 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
 
 ## Najkrótsze dowody
 
@@ -121,6 +121,12 @@ Rysunek pokazuje model 1 w przekroju rzeczywistym: krzywa $E$ jest okręgiem, a 
 Pełna hipoteza Riemanna dotyczy funkcji $\zeta$. Rysunek pokazuje powierzchnię $\lvert\zeta(\sigma + it)\rvert$ w 3 wymiarach. Sprawdzian 13 znajduje 6 zer dla $t \lt 40$, każde na prostej $\sigma = 1/2$. Pierwsze zero ma $t = 14{,}135$ `[obliczenie: skrypt]`.
 
 ![Powierzchnia modułu funkcji dzeta nad pasem krytycznym: 6 zer leży na prostej σ = 1/2.](figures/riemann-zeta-surface.png)
+
+**Riemann, druga droga: metoda Stepanova.** $S$ oznacza zbiór liczb $x \in F_p$, dla których $f(x) = 4x^3 - 4x + 1$ jest niezerowym kwadratem. Równanie $y^2 + y = x^3 - x$ krzywej 37a1 jest równoważne równaniu $(2y + 1)^2 = f(x)$ `[obliczenie: pomnożenie przez 4 i dodanie 1]`. Dla $x \in S$ zachodzi $x^p = x$ oraz $f(x)^{(p-1)/2} = 1$. Wielomian $F = f^K \sum _{j \lt J} (r_j + s_j f^{(p-1)/2}) X^{jp}$ ma $2JD$ niewiadomych współczynników, gdzie $\deg r_j \lt D$ i $\deg s_j \lt D$. Warunek, że $F$ ma zero rzędu $K$ w każdym punkcie zbioru $S$, nie zależy od punktu. Warunek daje więc układ równań liniowych z mniejszą liczbą równań niż $2JD$ `[źródło: Stepanov 1969]`. Niezerowe rozwiązanie daje nierówność $K \lvert S \rvert \le \deg F$. Dla $K$ rzędu $\sqrt{p}$ wynika nierówność $\lvert S \rvert \le p/2 + O(\sqrt{p})$, czyli $\lvert a \rvert = O(\sqrt{p})$ bez formy przecięcia `[źródło: Stepanov 1969]`.
+
+Sprawdzian 16 buduje wielomian $F$ dla $p = 101$ i $K = 8$. Wynik: $\lvert S \rvert \le 63$ przy $\lvert S \rvert = 49$ `[obliczenie: skrypt]`. 2 wielomiany, dla kwadratów i dla niekwadratów, dają $\lvert a \rvert \le 25$ `[obliczenie: skrypt]`. Forma przecięcia daje $\lvert a \rvert \le 2\sqrt{p} = 20{,}1$ `[obliczenie: skrypt]`. Rząd zera zastępuje w tej drodze geometrię. Dokument z 2026-11-20 przenosi ten pomysł na liczby całkowite `[źródło: alpo.ge/remark.pdf]`.
+
+![Rząd zera wielomianu Stepanova F w każdym punkcie x ciała o 101 elementach. Każdy z 49 punktów zbioru S ma zero rzędu co najmniej 8, punkty poza zbiorem S mają zero rzędu 0 albo 1.](figures/riemann-stepanov-multiplicity.png)
 
 **BSD.** Liczby $N_p = (D, G)$ dla każdej liczby pierwszej $p$ budują funkcję $L$ krzywej $E$. Postać pierwotna hipotezy: iloczyn liczb $N_p/p$ dla $p \le X$ rośnie jak $(\ln X)^r$ `[źródło: Birch, Swinnerton-Dyer 1965]`. Symbol $r$ oznacza rangę krzywej $E$. Nad ciałem funkcyjnym rachunek przecięć na powierzchni eliptycznej dowodzi nierówności: ranga $\le$ krotność zera funkcji $L$ `[źródło: Tate 1966]`.
 
@@ -249,7 +255,7 @@ Sprawdzian nie zastępuje dowodu etapu 3. Najmniejsza wartość własna maleje, 
 
 ![Najmniejsza wartość własna formy Weila w zależności od długości nośnika L, w skali logarytmicznej, dla 12 i 20 funkcji bazowych. Wartość spada z 3,22 × 10⁻³ dla L = ln 2 do 4,97 × 10⁻⁷ dla L = ln 3 i do wartości mniejszej niż 10⁻¹² po wejściu liczby 5.](figures/riemann-weil-positivity.png)
 
-Dokument z 2026-11-20 opisuje inną drogę do etapu 5: łańcuch theta liftów o długości $\sqrt{X}$ zastępuje krotność z metody Stepanova `[źródło: alpo.ge/remark.pdf]`.
+Dokument z 2026-11-20 opisuje inną drogę do etapu 5: łańcuch theta liftów o długości $\sqrt{X}$ zastępuje krotność z metody Stepanova `[źródło: alpo.ge/remark.pdf]`. Sprawdzian 16 pokazuje metodę Stepanova w modelu 1.
 
 ### BSD: skończoność grupy Tate'a–Szafarewicza krzywej 389a1
 
@@ -352,6 +358,7 @@ Każdy wiersz tabeli ma znacznik `[obliczenie: skrypt]`. Sprawdziany od 9 do 12 
 | 13 | 1 | Zera funkcji $\zeta$ na prostej $\sigma = 1/2$ dla $t \lt 40$ | 6 zer; pierwsze zero $t$ = 14,135; najmniejsza wartość $\lvert\zeta\rvert$ na prostych $\sigma = 0{,}25$ i $\sigma = 0{,}75$: 0,179 |
 | 14 | 1 | Rozkład 9 590 wartości $a/(2\sqrt{p})$ krzywej 37a1 | różnica dystrybuant względem rozkładu półokręgu: 0,0066 |
 | 15 | 1 | Forma Weila na 20 funkcjach bazowych dla $L = \ln 2$ (bez liczb pierwszych) i $L = \ln 3$ (tylko liczba 2) | najmniejsza wartość własna: $3{,}22 \times 10^{-3}$ oraz $4{,}97 \times 10^{-7}$; ta sama wartość z 38 zer funkcji $\zeta$ z różnicą 0,07 %; bez członu biegunowego: −2,02 |
+| 16 | 1 | Wielomian Stepanova dla krzywej 37a1 nad $F_{101}$, zera rzędu $K = 8$ | $\lvert S \rvert \le 63$ przy $\lvert S \rvert = 49$; $\lvert a \rvert \le 25$; forma przecięcia: $\lvert a \rvert \le 20{,}1$ |
 
 Sprawdzian 4 używa 4 krzywych: 11a3, 37a1, 389a1, 5077a1. Hipoteza BSD przewiduje nachylenie równe randze. Wzrost iloczynu jak $(\ln X)^r$ jest hipotezą, która implikuje hipotezę Riemanna dla funkcji $L(E, s)$ `[źródło: Goldfeld 1982; Kuo, Murty 2005]`. Sprawdziany 1 i 2 są równoważne: sygnatura $(1, 3)$ zachodzi wtedy i tylko wtedy, gdy $a^2 \lt 4p$. Wartość $E_0$ = 1,10822 zgadza się z wartością $1{,}10822315759$ z literatury `[źródło: Fernández, García 2014]`.
 
@@ -428,7 +435,7 @@ Każdy punkt jest propozycją zastosowania, bez wdrożenia.
 1. Kryptografia krzywych eliptycznych: dobór krzywej wymaga liczby punktów $N$ i granicy $a^2 \le 4p$. Sprawdzian 1 liczy obie wielkości `[założenie]`.
 2. Kryptografia z kluczem publicznym zakłada zdanie $P \ne NP$ `[założenie]`. Model zapytań pokazuje metody dowodu, które nie rozstrzygają zdania $P \ne NP$.
 3. Nauczanie: 1 problem dostaje co najmniej 2 rysunki i 1 dowód z co najwyżej 4 wierszy.
-4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 28 liczb z raportem i kończy pracę błędem przy różnicy.
+4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 31 liczb z raportem i kończy pracę błędem przy różnicy.
 5. Symulacje przepływów: liczba $\mathrm{Re}_n$ wskazuje skalę, na której siatka obliczeniowa wymaga zagęszczenia `[założenie]`.
 6. Metody wariacyjne w fizyce: hamiltonian $-\Delta + x^2y^2$ daje poziom $E_0$ z 5 cyframi oraz granicę dolną do porównań `[obliczenie: skrypt]`.
 7. Sprawdzanie dowodów: wątek dowodów jest programem, który sprawdza dowody. Formalizacje z 2026 r. używają systemu Lean `[źródło: sieć]`. Repozytorium zawiera 16 twierdzeń w Lean.
@@ -472,14 +479,14 @@ Wykonaj każdy krok w tej kolejności:
 1. Utwórz środowisko: `python3 -m venv .venv`.
 2. Zainstaluj biblioteki: `.venv/bin/pip install -r requirements.txt`.
 3. Uruchom sprawdziany: `.venv/bin/python models_check.py`. Wynik: skrypt wypisuje wiersz `all checks passed`.
-4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 15 plików PNG z tego skryptu.
+4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 16 plików PNG z tego skryptu.
 5. Narysuj animacje: `.venv/bin/python animations.py`. Wynik: katalog `figures` zawiera 3 pliki GIF i 1 plik PNG z tego skryptu.
 6. Zbuduj stronę interaktywną: `.venv/bin/python interactive.py`. Wynik: plik `docs/index.html`.
 7. Sprawdź dowody w Lean. W katalogu `lean` wykonaj `lake exe cache get`, a potem `lake build`. Wynik: wiersz `Build completed successfully`.
 8. Narysuj rysunek z Lean. W katalogu `lean` wykonaj `lake exe figure > ../figures/lean-hasse-bound.svg`.
 9. Uruchom symulacje w GNU Octave: `docker run --rm -v "$PWD":/work -w /work gnuoctave/octave:11.3.0 octave-cli matlab/run_all.m`. Wynik: wiersz `all octave checks passed`.
 
-Skrypt `models_check.py` porównuje 28 liczb z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
+Skrypt `models_check.py` porównuje 31 liczb z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
 
 Czasy pracy 4 skryptów: `models_check.py` 26 s i `figures.py` 46 s `[pomiar: 1 przebieg, 2026-11-20, laptop autora z 8 wątkami procesora]`; `animations.py` 66 s i `interactive.py` 24 s `[pomiar: 1 przebieg, 2026-11-13, laptop autora z 8 wątkami procesora]`.
 
@@ -554,6 +561,7 @@ Plik [references-check.md](references-check.md) podaje dla pozycji z 2026-11-13 
 - Rubinstein, J. H. (1995). An algorithm to recognize the 3-sphere. Proceedings of the International Congress of Mathematicians, Zürich 1994, tom 1, s. 601–611. Birkhäuser.
 - Shannon, C. (1949). The synthesis of two-terminal switching circuits. Bell System Technical Journal 28.
 - Simon, B. (1983). Some quantum operators with discrete spectrum but classically continuous spectrum. Annals of Physics 146.
+- Stepanov, S. A. (1969). On the number of points of a hyperelliptic curve over a finite prime field. Izvestiya Akademii Nauk SSSR, Seriya Matematicheskaya 33 (nowa).
 - Tao, T. (2016). Finite time blowup for an averaged three-dimensional Navier–Stokes equation. Journal of the American Mathematical Society 29.
 - Tate, J. (1966). On the conjectures of Birch and Swinnerton-Dyer and a geometric analog. Séminaire Bourbaki 306.
 - Turing, A. (1936). On computable numbers, with an application to the Entscheidungsproblem. Proceedings of the London Mathematical Society 42. Turing dowodzi nierozstrzygalności dla maszyn „circle-free”.

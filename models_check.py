@@ -559,6 +559,126 @@ def check_weil():
     return arch, one_prime, no_pole, len(zeros), gap
 
 
+# --- Check 16: Stepanov's method, a second proof of the Hasse bound that uses multiplicity instead of geometry ---
+
+
+def _pmul(a, b, p):
+    return np.convolve(a, b) % p
+
+
+def _ppow(a, n, p):
+    out = np.array([1], dtype=np.int64)
+    for _ in range(n):  # n < p, so repeated multiplication is fast enough
+        out = _pmul(out, a, p)
+    return out
+
+
+def _hasse(a, k, p):
+    """k-th Hasse derivative sum C(n, k) a_n X^(n-k); coefficients run from the constant term up."""
+    return np.array([math.comb(n, k) % p for n in range(k, len(a))], dtype=np.int64) * a[k:] % p
+
+
+def _divide(a, b, p):
+    """Exact quotient a / b over F_p; b has a nonzero leading coefficient."""
+    a, q = a % p, np.zeros(max(len(a) - len(b) + 1, 0), dtype=np.int64)
+    inverse = pow(int(b[-1]), p - 2, p)
+    for i in range(len(q) - 1, -1, -1):
+        q[i] = a[i + len(b) - 1] * inverse % p
+        a[i : i + len(b)] = (a[i : i + len(b)] - q[i] * b) % p
+    assert not a.any(), "the division leaves a remainder"
+    return q
+
+
+def _horner(a, xs, p):
+    out = np.zeros(len(xs), dtype=np.int64)
+    for c in a[::-1]:
+        out = (out * xs + c) % p
+    return out
+
+
+def _null_vector(m, p):
+    """A nonzero v with m v = 0 over F_p (Gauss-Jordan elimination; m has more columns than rank)."""
+    m, pivots = m % p, []
+    for c in range(m.shape[1]):
+        r = len(pivots)
+        hits = np.flatnonzero(m[r:, c]) if r < len(m) else []
+        if len(hits):
+            m[[r, r + hits[0]]] = m[[r + hits[0], r]]
+            m[r] = m[r] * pow(int(m[r, c]), p - 2, p) % p
+            factor = m[:, c].copy()
+            factor[r] = 0
+            m = (m - np.outer(factor, m[r])) % p
+            pivots.append(c)
+    v = np.zeros(m.shape[1], dtype=np.int64)
+    free = next(c for c in range(m.shape[1]) if c not in set(pivots))
+    v[free] = 1
+    v[pivots] = -m[: len(pivots), free] % p
+    return v
+
+
+def stepanov_parameters(p, m):
+    """K, J, D with more unknowns (2JD) than linear conditions and the smallest worst-case bound for |S|."""
+    best = None
+    for K in range(2, 3 * math.isqrt(p)):
+        for J in range(1, K + 1):
+            conditions = lambda D: K * (J + D - 1) + (m - 1) * K * (K - 1) // 2  # noqa: E731
+            D = next((D for D in range(1, (p - m) // 2 + 1) if 2 * J * D > conditions(D)), None)
+            if D:
+                candidate = (((J - 1) * p + (K + (p - 1) // 2) * m + D - 1) // K, K, J, D)
+                best = min(best or candidate, candidate)
+    return best[1:]
+
+
+def stepanov_bound(f, p):
+    """Upper bound for |S|, S = {x in F_p : f(x) is a nonzero square}, from Stepanov's auxiliary polynomial.
+
+    F = f^K sum_{j<J} (r_j + s_j f^c) X^(jp) with c = (p-1)/2 and deg r_j, s_j < D. For x in S the k-th Hasse
+    derivative of F equals f(x)^(K-k) T_k(x), because x^p = x and f(x)^c = 1; T_k does not depend on x.
+    Linear algebra makes every T_k zero (k < K), so F vanishes to order K at each point of S: K |S| <= deg F.
+    The asserts check F != 0 and the order of every zero directly. Returns deg F // K, |S|, K.
+    """
+    m, c = len(f) - 1, (p - 1) // 2
+    K, J, D = stepanov_parameters(p, m)
+    fk, fkc = _ppow(f, K, p), _ppow(f, K + c, p)
+    start = np.cumsum([0] + [J + D - 1 + k * (m - 1) for k in range(K)])
+    system = np.zeros((start[-1], 2 * J * D), dtype=np.int64)
+    for k in range(K):
+        for t, (top, down) in enumerate(((fk, _ppow(f, K - k, p)), (fkc, _ppow(f, K + c - k, p)))):
+            for d in range(D):
+                poly = np.trim_zeros(_divide(_hasse(np.concatenate([np.zeros(d, np.int64), top]), k, p), down, p), "b")
+                for j in range(J):
+                    system[start[k] + j : start[k] + j + len(poly), (t * J + j) * D + d] = poly
+    r, s = _null_vector(system, p).reshape(2, J, D)
+    fc = _ppow(f, c, p)
+    total = np.zeros(J * p + len(fc) + D, dtype=np.int64)
+    for j in range(J):
+        total[j * p : j * p + D] += r[j]
+        part = _pmul(s[j], fc, p)
+        total[j * p : j * p + len(part)] += part
+    big = np.trim_zeros(_pmul(fk, total % p, p), "b")
+    assert big.size, "the auxiliary polynomial is zero"
+    xs = np.arange(p, dtype=np.int64)
+    values = _horner(f, xs, p)
+    squares = xs[(values != 0) & (np.array([pow(int(v), c, p) for v in values]) == 1)]
+    assert all(not _horner(_hasse(big, k, p), squares, p).any() for k in range(K))
+    return (len(big) - 1) // K, len(squares), K, big
+
+
+def check_stepanov(p=101):
+    """|a| for 37a1 over F_p: 2 auxiliary polynomials bound the squares and the non-squares among f(x)."""
+    f = np.array([1, -4, 0, 4], dtype=np.int64) % p  # 37a1: (2y + 1)^2 = 4x^3 - 4x + 1 = f(x)
+    non_residue = next(g for g in range(2, p) if pow(g, (p - 1) // 2, p) == p - 1)
+    up, squares, K, _ = stepanov_bound(f, p)
+    up2, non_squares, *_ = stepanov_bound(f * non_residue % p, p)
+    a = non_squares - squares  # p - (number of affine points), the trace of Frobenius
+    nonzero = squares + non_squares
+    bound = max(2 * up - nonzero, 2 * up2 - nonzero)
+    xs = np.arange(p, dtype=np.int64)
+    affine = int(((xs * xs + xs) % p == ((xs**3 - xs) % p)[:, None]).sum())  # y^2 + y = x^3 - x, counted directly
+    assert a == p - affine and abs(a) <= bound, (a, p - affine, bound)
+    return p, K, up, squares, a, bound
+
+
 def sci(x):
     """Number as the report prints it in LaTeX: 4,97 \\times 10^{-7}."""
     exponent = math.floor(math.log10(abs(x)))
@@ -612,6 +732,9 @@ if __name__ == "__main__":
     print(f"[check 15] Weil form on 20 basis functions: support ln 2 (no prime) min eigenvalue {arch:.3e}; "
           f"support ln 3 (only the prime 2) {one_prime:.3e}, the same from {nzeros} zeros to {100 * gap:.2f} %; "
           f"without the pole term {no_pole:.3f}")
+    sp, sk, s_up, s_size, s_a, s_bound = check_stepanov()
+    print(f"[check 16] Stepanov for 37a1 over F_{sp}: zeros of order {sk} on S give |S| <= {s_up} (|S| = {s_size}); "
+          f"|a| <= {s_bound}, a = {s_a}, Hasse bound 2 sqrt(p) = {2 * math.sqrt(sp):.2f}")
     report = Path(__file__).with_name("REPORT.md")
     if report.exists():  # the report must quote the numbers computed above
         quoted = [thousands(curves), str(pairs), pl(worst, 4), *(pl(v[2]) for v in bsd.values()),
@@ -620,7 +743,8 @@ if __name__ == "__main__":
                   pl(100 * sim["area_error"], 2), pl(sim["ratio_end"], 4), pl(sim["enstrophy_start"], 3),
                   pl(sim["enstrophy_end"], 3), pl(100 * sim["peak_rise"], 2), pl(100 * sim["mass_outside"], 2), pl(sim["sat_slope"], 3),
                   pl(zeros[0], 3), pl(off_line, 3), pl(distance, 4),
-                  sci(arch), sci(one_prime), pl(no_pole), str(nzeros)]
+                  sci(arch), sci(one_prime), pl(no_pole), str(nzeros),
+                  f"\\lvert S \\rvert \\le {s_up}", f"\\lvert a \\rvert \\le {s_bound}", pl(2 * math.sqrt(sp), 1)]
         text = report.read_text(encoding="utf-8").replace("{,}", ",")  # LaTeX decimal comma
         missing = [q for q in quoted if q not in text]
         assert not missing, f"REPORT.md does not quote: {missing}"
