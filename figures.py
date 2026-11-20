@@ -374,6 +374,45 @@ def figure_counterexample_thread():
     save(fig, "riemann-counterexample-thread.png")
 
 
+def figure_weil_positivity():
+    lengths = np.round(np.arange(0.3, 1.85, 0.1), 2)
+    curves = {k: np.array([mc.weil_form(L / 2, k)[0] for L in lengths]) for k in (12, 20)}
+    arch = mc.weil_form(np.log(2) / 2)[0]
+    one_prime = mc.weil_form(np.log(3) / 2)[0]
+    floor = 1e-12  # two discretisations of the form differ by about 3e-14 at L >= 1.4
+
+    def tex(v):
+        return "$" + mc.sci(v).replace(",", "{,}") + "$"
+
+    fig, (ax,) = frame(
+        "Forma Weila jest dodatnia, gdy wchodzi tylko liczba 2,\n"
+        f"ale jej minimum spada z {tex(arch)} do {tex(one_prime)}, gdy nośnik rośnie z ln 2 do ln 3",
+        "Najmniejsza wartość własna formy W(g ∗ g̃) na K funkcjach bazowych o nośniku [−L/2, L/2]. "
+        "Hipoteza Riemanna jest równoważna\nzdaniu: forma jest nieujemna dla każdej funkcji g. "
+        "Potęga liczby pierwszej n wchodzi do formy, gdy ln n < L.",
+        "Źródło: models_check.py, sprawdzian 15. Kryterium: Weil 1952. Funkcje bazowe: (1 − (x/a)²)⁶ P_j(x/a), "
+        "a = L/2, j < K, P_j: wielomian Legendre'a.",
+    )
+    ax.axhspan(1e-17, floor, color=GRID, zorder=1)
+    ax.text(0.32, 3e-16, "wartość mniejsza niż 10⁻¹²: rachunek w arytmetyce float64 nie rozstrzyga znaku wartości",
+            fontsize=8.5, color=INK2)
+    for n, label in ((2, "wchodzi 2"), (3, "wchodzi 3"), (4, "wchodzi 4 = 2²"), (5, "wchodzi 5")):
+        ax.axvline(np.log(n), color=AXIS, lw=1, ls="--", zorder=2)
+        ax.text(np.log(n) + 0.012, 0.3, label, rotation=90, va="top", fontsize=8.5, color=INK2)
+    for k, color in ((12, RAMP[0]), (20, BLUE)):
+        keep = curves[k] > floor
+        ax.plot(lengths[keep], curves[k][keep], "-o", color=color, markersize=3.5, zorder=3, label=f"K = {k}")
+    for length, value in ((np.log(2), arch), (np.log(3), one_prime)):
+        ax.plot(length, value, "o", color=BLUE, markeredgecolor=SURFACE, markeredgewidth=RING, markersize=8, zorder=4)
+        ax.text(length - 0.025, value / 5, tex(value), fontsize=9, color=INK, ha="right", va="top")
+    ax.set_yscale("log")
+    ax.set(xlim=(0.3, 1.8), ylim=(1e-16, 1), xlabel="L: nośnik funkcji f = g ∗ g̃ leży w przedziale [−L, L]",
+           ylabel="najmniejsza wartość własna")
+    comma_ticks(ax.xaxis, 1)
+    ax.legend(loc="center left", title="liczba funkcji bazowych", title_fontsize=8.5)
+    save(fig, "riemann-weil-positivity.png")
+
+
 def box(ax, x, y, text, color, width, height=9.0):
     ax.add_patch(plt.Rectangle((x - width / 2, y - height / 2), width, height, facecolor=SURFACE,
                                edgecolor=color, lw=LINE, zorder=2))
@@ -567,6 +606,7 @@ if __name__ == "__main__":
     style()
     figure_algorithm()
     figure_counterexample_thread()
+    figure_weil_positivity()
     figure_riemann()
     figure_hodge()
     figure_poincare()

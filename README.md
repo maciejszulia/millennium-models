@@ -4,7 +4,7 @@
 
 ## Streszczenie
 
-Repozytorium sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Repozytorium nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 włącznie. 4 symulacje i 22 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
+Repozytorium sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Repozytorium nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 włącznie. Sprawdzian 15 liczy formę Weila, do której wchodzi tylko liczba pierwsza 2: na 20 funkcjach bazowych forma jest dodatnia. 4 symulacje i 23 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
 
 12 dowodów zawiera sekcja „Najkrótsze dowody” w pliku [REPORT.md](REPORT.md). Każdy dowód ma co najwyżej 4 wiersze. Żaden dowód nie dotyczy problemu otwartego.
 
@@ -14,18 +14,18 @@ Autor: Maciej Szulia, maciej.szulia@gmail.com
 
 | Plik | Zawartość |
 |---|---|
-| [REPORT.md](REPORT.md) | Raport: streszczenie, 12 dowodów, 3 modele, 7 propozycji, propozycje i ponumerowane etapy uzupełnienia brakujących kroków, algorytm, 14 sprawdzianów, uproszczenia, zastosowania, problematyka, dyskusja, bibliografia. |
+| [REPORT.md](REPORT.md) | Raport: streszczenie, 12 dowodów, 3 modele, 7 propozycji, propozycje i ponumerowane etapy uzupełnienia brakujących kroków, algorytm, 15 sprawdzianów, uproszczenia, zastosowania, problematyka, dyskusja, bibliografia. |
 | [references-check.md](references-check.md) | Wynik sprawdzenia 40 odsyłaczy z 2026-11-13: dane pozycji, DOI, stan potwierdzenia każdego twierdzenia. |
-| [models_check.py](models_check.py) | 14 sprawdzianów. Jeżeli co najmniej 1 sprawdzian daje liczby niezgodne z twierdzeniem albo z raportem, to skrypt kończy pracę błędem. |
+| [models_check.py](models_check.py) | 15 sprawdzianów. Jeżeli co najmniej 1 sprawdzian daje liczby niezgodne z twierdzeniem albo z raportem, to skrypt kończy pracę błędem. |
 | [simulations.py](simulations.py) | 4 symulacje: przepływ skracający krzywą, wirowość w 2 wymiarach, orbity w potencjale $x^2y^2$, przeszukiwanie formuł 3-SAT. |
-| [figures.py](figures.py) | Skrypt, który rysuje 14 rysunków PNG w bibliotekach matplotlib i seaborn. |
+| [figures.py](figures.py) | Skrypt, który rysuje 15 rysunków PNG w bibliotekach matplotlib i seaborn. |
 | [animations.py](animations.py) | Skrypt, który rysuje 3 animacje GIF i 1 rysunek PNG w bibliotece matplotlib. |
 | [interactive.py](interactive.py) | Skrypt, który buduje stronę z 14 rysunkami interaktywnymi w bibliotece plotly. |
 | [docs/index.html](docs/index.html) | Strona z 14 rysunkami interaktywnymi. |
 | [lean/MillenniumModels/Proofs.lean](lean/MillenniumModels/Proofs.lean) | 16 twierdzeń, które sprawdza system Lean 4 z biblioteką Mathlib. |
 | [lean/Figure.lean](lean/Figure.lean) | Program w języku Lean 4, który liczy punkty krzywej i rysuje 1 rysunek SVG. |
 | [matlab](matlab) | 3 symulacje w języku MATLAB i skrypt `run_all.m`. Program GNU Octave 11.3.0 uruchamia każdy plik. |
-| [figures](figures) | 18 rysunków PNG, 3 animacje GIF i 1 rysunek SVG. |
+| [figures](figures) | 19 rysunków PNG, 3 animacje GIF i 1 rysunek SVG. |
 | [LICENSE](LICENSE) | Licencja MIT. |
 
 ## 3 modele i 1 algorytm
@@ -54,6 +54,10 @@ Brakujący krok: odpowiednik powierzchni $E \times E$ z formą przecięcia dla p
 ![Lewy panel: punkty krzywej y² + y = x³ − x nad ciałem o 97 elementach. Prawy panel: pary (p, a) dla krzywych eliptycznych leżą wewnątrz paraboli a² = 4p.](figures/riemann-hasse-bound.png)
 
 ![Powierzchnia modułu funkcji dzeta nad pasem krytycznym: 6 zer leży na prostej σ = 1/2.](figures/riemann-zeta-surface.png)
+
+Etap 3 brakującego kroku: forma Weila jest nieujemna, gdy do formy wchodzi tylko liczba 2. Sprawdzian 15 nie zastępuje dowodu, bo obejmuje tylko 20 funkcji bazowych.
+
+![Najmniejsza wartość własna formy Weila w zależności od długości nośnika L, w skali logarytmicznej, dla 12 i 20 funkcji bazowych. Wartość spada z 3,22 × 10⁻³ dla L = ln 2 do 4,97 × 10⁻⁷ dla L = ln 3 i do wartości mniejszej niż 10⁻¹² po wejściu liczby 5.](figures/riemann-weil-positivity.png)
 
 ### 2. Hipoteza Bircha i Swinnertona-Dyera
 
@@ -138,14 +142,14 @@ Wykonaj każdy krok w tej kolejności:
 1. Utwórz środowisko: `python3 -m venv .venv`.
 2. Zainstaluj biblioteki: `.venv/bin/pip install -r requirements.txt`.
 3. Uruchom sprawdziany: `.venv/bin/python models_check.py`. Wynik: skrypt wypisuje wiersz `all checks passed`.
-4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 14 plików PNG z tego skryptu.
+4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 15 plików PNG z tego skryptu.
 5. Narysuj animacje: `.venv/bin/python animations.py`. Wynik: katalog `figures` zawiera 3 pliki GIF i 1 plik PNG z tego skryptu.
 6. Zbuduj stronę interaktywną: `.venv/bin/python interactive.py`. Wynik: plik `docs/index.html`.
 7. Sprawdź dowody w Lean. W katalogu `lean` wykonaj `lake exe cache get`, a potem `lake build`. Wynik: wiersz `Build completed successfully`.
 8. Narysuj rysunek z Lean. W katalogu `lean` wykonaj `lake exe figure > ../figures/lean-hasse-bound.svg`.
 9. Uruchom symulacje w GNU Octave: `docker run --rm -v "$PWD":/work -w /work gnuoctave/octave:11.3.0 octave-cli matlab/run_all.m`. Wynik: wiersz `all octave checks passed`.
 
-Czasy pracy 4 skryptów: `models_check.py` 23 s, `figures.py` 27 s, `animations.py` 66 s, `interactive.py` 24 s. Pomiar: 1 przebieg z 2026-11-13, laptop autora z 8 wątkami procesora.
+Czasy pracy 4 skryptów: `models_check.py` 26 s i `figures.py` 46 s (pomiar: 1 przebieg z 2026-11-20); `animations.py` 66 s i `interactive.py` 24 s (pomiar: 1 przebieg z 2026-11-13). Każdy pomiar: laptop autora z 8 wątkami procesora.
 
 ## Problematyka
 
