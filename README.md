@@ -20,8 +20,8 @@ Autor: Maciej Szulia, maciej.szulia@gmail.com
 | [simulations.py](simulations.py) | 4 symulacje: przepływ skracający krzywą, wirowość w 2 wymiarach, orbity w potencjale $x^2y^2$, przeszukiwanie formuł 3-SAT. |
 | [figures.py](figures.py) | Skrypt, który rysuje 16 rysunków PNG w bibliotekach matplotlib i seaborn. |
 | [animations.py](animations.py) | Skrypt, który rysuje 3 animacje GIF i 1 rysunek PNG w bibliotece matplotlib. |
-| [interactive.py](interactive.py) | Skrypt, który buduje stronę z 14 rysunkami interaktywnymi w bibliotece plotly. |
-| [docs/index.html](docs/index.html) | Strona z 14 rysunkami interaktywnymi. |
+| [interactive.py](interactive.py) | Skrypt, który buduje stronę z 16 rysunkami interaktywnymi w bibliotece plotly. |
+| [docs/index.html](docs/index.html) | Strona z 16 rysunkami interaktywnymi. |
 | [lean/MillenniumModels/Proofs.lean](lean/MillenniumModels/Proofs.lean) | 16 twierdzeń, które sprawdza system Lean 4 z biblioteką Mathlib. |
 | [lean/Figure.lean](lean/Figure.lean) | Program w języku Lean 4, który liczy punkty krzywej i rysuje 1 rysunek SVG. |
 | [matlab](matlab) | 3 symulacje w języku MATLAB i skrypt `run_all.m`. Program GNU Octave 11.3.0 uruchamia każdy plik. |
@@ -39,7 +39,7 @@ Autor: Maciej Szulia, maciej.szulia@gmail.com
 
 ## Rysunki interaktywne
 
-Strona [maciejszulia.github.io/millennium-models](https://maciejszulia.github.io/millennium-models/) zawiera 14 rysunków interaktywnych. 5 rysunków w 3 wymiarach obraca się myszą, a 2 rysunki mają suwak czasu. Stronę buduje plik `docs/index.html`. Rysunki 3 wymiarów wymagają przeglądarki z WebGL.
+Strona [maciejszulia.github.io/millennium-models](https://maciejszulia.github.io/millennium-models/) zawiera 16 rysunków interaktywnych. 5 rysunków w 3 wymiarach obraca się myszą, a 2 rysunki mają suwak czasu. Stronę buduje plik `docs/index.html`. Rysunki 3 wymiarów wymagają przeglądarki z WebGL.
 
 Strona pobiera biblioteki plotly.js i MathJax z sieci.
 

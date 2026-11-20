@@ -102,6 +102,60 @@ def riemann_counterexample_thread():
             f"iloraz nie przekracza 1. Największy iloraz daje liczba \\(n = {worst_n}\\).", fig)
 
 
+def riemann_weil_positivity():
+    lengths = np.round(np.arange(0.3, 1.85, 0.1), 2)
+    floor = 1e-12  # float64 cannot decide the sign of smaller values (see figures.py)
+    fig = go.Figure()
+    fig.add_hrect(y0=1e-16, y1=floor, fillcolor=GRID, line_width=0, layer="below")
+    for n in (2, 3, 4, 5):
+        fig.add_vline(x=np.log(n), line={"color": AXIS, "width": 1, "dash": "dash"},
+                      annotation_text=f"wchodzi {n}", annotation_position="top", annotation_font_color=INK2)
+    for k, color in ((12, RAMP[0]), (20, BLUE)):
+        values = np.array([mc.weil_form(L / 2, k)[0] for L in lengths])
+        keep = values > floor
+        primes = [", ".join(str(n) for n in range(2, 6) if np.log(n) < L) or "brak" for L in lengths[keep]]
+        fig.add_scatter(x=lengths[keep], y=values[keep], mode="lines+markers", name=f"K = {k} funkcji bazowych",
+                        line={"color": color, "width": 2}, marker={"size": 7}, customdata=primes,
+                        hovertemplate="L = %{x:.1f}<br>najmniejsza wartość własna: %{y:.3e}<br>liczby w formie: "
+                                      "%{customdata}<extra></extra>")
+    one_prime = mc.weil_form(np.log(3) / 2)[0]
+    tidy(fig, height=520, legend_y=-0.2, xaxis_title="L: nośnik funkcji f = g ∗ g̃ leży w przedziale [−L, L]",
+         yaxis_title="najmniejsza wartość własna", yaxis_type="log", yaxis_range=[-16, 0], xaxis_range=[0.3, 1.8],
+         yaxis_exponentformat="power", yaxis_dtick=2)
+    fig.update_layout(margin={"b": 110})
+    return ("Forma Weila jest dodatnia, gdy wchodzi tylko liczba 2, ale jej minimum maleje wykładniczo",
+            "Najmniejsza wartość \\(W(g \\ast \\tilde{g})\\) dla \\(\\lVert g \\rVert_2 = 1\\) na \\(K\\) funkcjach "
+            f"bazowych. Dla \\(L = \\ln 3\\) i \\(K = 20\\) wynosi {pl(one_prime / 10 ** np.floor(np.log10(one_prime)))} "
+            f"\\(\\times 10^{{{int(np.floor(np.log10(one_prime)))}}}\\). Szary pas: wartości mniejsze niż "
+            "\\(10^{-12}\\), których znaku arytmetyka float64 nie rozstrzyga.", fig)
+
+
+def riemann_stepanov(p=101):
+    f = np.array([1, -4, 0, 4], dtype=np.int64) % p  # 37a1: (2y + 1)^2 = 4x^3 - 4x + 1
+    bound, size, K, big = mc.stepanov_bound(f, p)
+    xs = np.arange(p, dtype=np.int64)
+    values = mc._horner(f, xs, p)
+    in_s = (values != 0) & (np.array([pow(int(v), (p - 1) // 2, p) for v in values]) == 1)
+    order = np.full(p, -1)
+    for k in range(4 * K):  # order of the zero = first k with a nonzero Hasse derivative
+        alive = (order < 0) & (mc._horner(mc._hasse(big, k, p), xs, p) != 0)
+        order[alive] = k
+    order[order < 0] = 4 * K
+    fig = go.Figure()
+    for mask, color, name in ((in_s, BLUE, f"x w zbiorze S ({size} punktów)"), (~in_s, AXIS, "x poza zbiorem S")):
+        fig.add_bar(x=xs[mask], y=order[mask], marker_color=color, name=name, customdata=values[mask],
+                    hovertemplate="x = %{x}<br>f(x) = %{customdata} (mod " + str(p) + ")<br>rząd zera: %{y}"
+                                  "<extra></extra>")
+    fig.add_hline(y=K, line={"color": INK2, "width": 1.5, "dash": "dash"}, annotation_text=f"K = {K}",
+                  annotation_position="top right")
+    tidy(fig, bargap=0.2, xaxis_title="x", yaxis_title="rząd zera wielomianu F", yaxis_range=[0, K + 3.5])
+    return (f"Wielomian Stepanova ma zero rzędu co najmniej {K} w każdym z {size} punktów zbioru S, "
+            f"więc \\(|S| \\le {bound}\\)",
+            f"Krzywa 37a1 nad ciałem \\(F_{{{p}}}\\): \\((2y + 1)^2 = f(x)\\), \\(f(x) = 4x^3 - 4x + 1\\). "
+            "\\(S\\) oznacza zbiór liczb \\(x\\), dla których \\(f(x)\\) jest niezerowym kwadratem. "
+            f"Nierówność \\({K} |S| \\le \\deg F = {len(big) - 1}\\) zastępuje geometrię.", fig)
+
+
 def bsd_slopes(data):
     primes, series = data
     summary = mc.bsd_products(data=data)
@@ -380,6 +434,7 @@ def build():
     figures = [
         ("Riemann", riemann_hasse()), ("Riemann, 3 wymiary", riemann_zeta()),
         ("Riemann, algorytm", riemann_counterexample_thread()),
+        ("Riemann, forma Weila", riemann_weil_positivity()), ("Riemann, metoda Stepanova", riemann_stepanov()),
         ("BSD", bsd_slopes(data)), ("BSD", bsd_sato_tate(data)),
         ("Model 1, 3 wymiary", model_1_torus()), ("Hodge", hodge_lattices()),
         ("Poincaré, 3 wymiary, suwak", poincare_sphere()), ("Poincaré, symulacja, suwak", poincare_curve()),
