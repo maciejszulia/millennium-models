@@ -413,6 +413,35 @@ def figure_weil_positivity():
     save(fig, "riemann-weil-positivity.png")
 
 
+def figure_stepanov(p=101):
+    f = np.array([1, -4, 0, 4], dtype=np.int64) % p  # 37a1: (2y + 1)^2 = 4x^3 - 4x + 1
+    bound, size, K, big = mc.stepanov_bound(f, p)
+    xs = np.arange(p, dtype=np.int64)
+    values = mc._horner(f, xs, p)
+    in_s = (values != 0) & (np.array([pow(int(v), (p - 1) // 2, p) for v in values]) == 1)
+    order = np.full(p, -1)
+    for k in range(4 * K):  # order of the zero = first k with a nonzero Hasse derivative
+        alive = (order < 0) & (mc._horner(mc._hasse(big, k, p), xs, p) != 0)
+        order[alive] = k
+    order[order < 0] = 4 * K
+    fig, (ax,) = frame(
+        f"Wielomian Stepanova ma zero rzędu co najmniej {K} w każdym z {size} punktów zbioru S,\n"
+        f"więc {K} × |S| ≤ deg F = {len(big) - 1} i |S| ≤ {bound}",
+        f"Krzywa 37a1 nad ciałem F{str(p).translate(SUB)}: (2y + 1)² = f(x), f(x) = 4x³ − 4x + 1. "
+        "S oznacza zbiór liczb x, dla których f(x) jest niezerowym kwadratem.\n"
+        "Słupek = rząd zera wielomianu F w punkcie x. Rząd zera zastępuje geometrię z rysunku a² ≤ 4p.",
+        "Źródło: models_check.py, sprawdzian 16. Metoda: Stepanov 1969. F = f^K Σ (r_j + s_j f^((p−1)/2)) x^(jp); "
+        "wielomiany r_j, s_j daje układ równań liniowych nad F_p.",
+    )
+    ax.bar(xs[in_s], order[in_s], width=0.8, color=BLUE, label=f"x w zbiorze S ({size} punktów)", zorder=3)
+    ax.bar(xs[~in_s], order[~in_s], width=0.8, color=AXIS, label="x poza zbiorem S", zorder=3)
+    ax.axhline(K, color=INK2, lw=1.3, ls="--", zorder=2)
+    ax.text(p + 0.5, K + 0.15, f"K = {K}", va="bottom", fontsize=8.5, color=INK2)
+    ax.set(xlim=(-1, p + 6), ylim=(0, K + 3.5), xlabel="x", ylabel="rząd zera wielomianu F")
+    ax.legend(loc="upper left", ncols=2)
+    save(fig, "riemann-stepanov-multiplicity.png")
+
+
 def box(ax, x, y, text, color, width, height=9.0):
     ax.add_patch(plt.Rectangle((x - width / 2, y - height / 2), width, height, facecolor=SURFACE,
                                edgecolor=color, lw=LINE, zorder=2))
@@ -607,6 +636,7 @@ if __name__ == "__main__":
     figure_algorithm()
     figure_counterexample_thread()
     figure_weil_positivity()
+    figure_stepanov()
     figure_riemann()
     figure_hodge()
     figure_poincare()

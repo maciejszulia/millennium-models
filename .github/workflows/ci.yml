@@ -17,7 +17,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Run the 15 checks and compare the numbers quoted in REPORT.md
+      - name: Run the 16 checks and compare the numbers quoted in REPORT.md
         run: python models_check.py
 
   lean:
