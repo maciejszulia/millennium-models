@@ -406,7 +406,7 @@ Plik `x2y2_levels.m` liczy granicę dolną inną metodą niż skrypt `models_che
 
 ## Rysunki interaktywne
 
-Plik [docs/index.html](docs/index.html) zawiera 14 rysunków interaktywnych z biblioteki plotly. Wskazanie znaku na rysunku pokazuje liczby. Strona ma adres [maciejszulia.github.io/millennium-models](https://maciejszulia.github.io/millennium-models/). 5 rysunków w 3 wymiarach obraca się myszą, a 2 rysunki mają suwak czasu. Strona pobiera biblioteki plotly.js i MathJax z sieci. Rysunki z katalogu `figures` powstają w bibliotekach matplotlib i seaborn.
+Plik [docs/index.html](docs/index.html) zawiera 16 rysunków interaktywnych z biblioteki plotly. Wskazanie znaku na rysunku pokazuje liczby. Strona ma adres [maciejszulia.github.io/millennium-models](https://maciejszulia.github.io/millennium-models/). 5 rysunków w 3 wymiarach obraca się myszą, a 2 rysunki mają suwak czasu. Strona pobiera biblioteki plotly.js i MathJax z sieci. Rysunki z katalogu `figures` powstają w bibliotekach matplotlib i seaborn.
 
 ## Uproszczenia
 
