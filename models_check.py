@@ -496,6 +496,75 @@ def check_zeta():
     return zeros, off_line
 
 
+# --- Check 15: Weil positivity, stage 3 of the Riemann list (support that admits only the prime 2) ---
+
+
+def digamma(z):
+    """psi(z) for complex z with Re z > 0: 10 recurrence steps, then the asymptotic series."""
+    z = np.asarray(z, dtype=complex)
+    w = z + 10
+    w2 = 1 / (w * w)
+    series = w2 * (1 / 12 - w2 * (1 / 120 - w2 * (1 / 252 - w2 * (1 / 240 - w2 / 132))))
+    return np.log(w) - 1 / (2 * w) - series - sum(1 / (z + k) for k in range(10))
+
+
+def weil_form(a, k=20, nodes=600, step=0.1, with_pole=True):
+    """Smallest eigenvalue of the Weil form W(g * g~) on g = sum c_j (1 - (x/a)^2)^6 P_j(x/a), |x| < a, ||g|| = 1.
+
+    W(f) = h(i/2) + h(-i/2) - f(0) ln(pi) + (1/2pi) int h(r) Re psi(1/4 + ir/2) dr
+           - sum_n Lambda(n) n^(-1/2) (f(ln n) + f(-ln n)),   h(r) = int f(x) e^(irx) dx.
+    By the explicit formula W(g * g~) = sum over zeros of |g^(gamma)|^2; the Riemann hypothesis
+    holds if and only if W(g * g~) >= 0 for every g (Weil 1952). Only n < e^(2a) enter the sum.
+    Returns the eigenvalue, the eigenvector as values of g at the nodes, the nodes and their weights.
+    """
+    t, w = np.polynomial.legendre.leggauss(nodes)
+    x, w = a * t, a * w
+
+    def basis(xs):
+        u = np.clip(xs / a, -1, 1)
+        return np.polynomial.legendre.legvander(u, k - 1).T * ((1 - u * u) ** 6 * (np.abs(xs) < a))
+
+    phi = basis(x)
+    wphi = phi * w
+    gram = wphi @ phi.T
+    up, down = wphi @ np.exp(x / 2), wphi @ np.exp(-x / 2)
+    form = -math.log(math.pi) * gram + (np.outer(up, down) + np.outer(down, up) if with_pole else 0)
+    for chunk in np.array_split(np.arange(0, 12 * (k + 12) / a, step), 8):  # |hat phi| falls like r^-7
+        hat = wphi @ np.exp(1j * np.outer(x, chunk))
+        weight = step * digamma(0.25 + 0.5j * chunk).real
+        weight[chunk == 0] /= 2  # trapezoid on the even integrand
+        form += ((hat * weight) @ hat.conj().T).real / math.pi
+    for p in primes_upto(int(math.exp(2 * a))):
+        q = p
+        while math.log(q) < 2 * a:
+            corr = wphi @ basis(x - math.log(q)).T  # f(ln q) for f = phi_j * phi_k~
+            form -= math.log(p) / math.sqrt(q) * (corr + corr.T)
+            q *= p
+    inv = np.linalg.inv(np.linalg.cholesky(gram))
+    values, vectors = np.linalg.eigh(inv @ form @ inv.T)
+    return float(values[0]), (inv.T @ vectors[:, 0]) @ phi, x, w
+
+
+def check_weil():
+    """Stage 2 (only the archimedean place) and stage 3 (only the prime 2), checked on 20 basis functions."""
+    arch, *_ = weil_form(math.log(2) / 2)
+    one_prime, g, x, w = weil_form(math.log(3) / 2)
+    no_pole, *_ = weil_form(math.log(3) / 2, with_pole=False)
+    assert arch > 0 and one_prime > 0 and no_pole < 0, (arch, one_prime, no_pole)
+    # The same number from the other side of the explicit formula: zeros up to height 120
+    zeros = np.array(zeta_zeros_on_line(120.0, 0.0005))
+    via_zeros = 2 * float((np.abs((g * w) @ np.exp(1j * np.outer(x, zeros))) ** 2).sum())
+    gap = abs(via_zeros - one_prime) / one_prime
+    assert gap < 0.01, (one_prime, via_zeros)
+    return arch, one_prime, no_pole, len(zeros), gap
+
+
+def sci(x):
+    """Number as the report prints it in LaTeX: 4,97 \\times 10^{-7}."""
+    exponent = math.floor(math.log10(abs(x)))
+    return f"{pl(x / 10**exponent)} \\times 10^{{{exponent}}}"
+
+
 if __name__ == "__main__":
     t0 = time.time()
     curves, pairs, worst = check_hasse_via_hodge_index()
@@ -539,6 +608,10 @@ if __name__ == "__main__":
     print(f"[check 13] zeta: {len(zeros)} zeros on the line for t < 40 at {', '.join(f'{z:.3f}' for z in zeros)}; "
           f"min |zeta| on the lines 0.25 and 0.75: {off_line:.3f}")
     print(f"[check 14] Sato-Tate for 37a1: distance to the semicircle law {distance:.4f}")
+    arch, one_prime, no_pole, nzeros, gap = check_weil()
+    print(f"[check 15] Weil form on 20 basis functions: support ln 2 (no prime) min eigenvalue {arch:.3e}; "
+          f"support ln 3 (only the prime 2) {one_prime:.3e}, the same from {nzeros} zeros to {100 * gap:.2f} %; "
+          f"without the pole term {no_pole:.3f}")
     report = Path(__file__).with_name("REPORT.md")
     if report.exists():  # the report must quote the numbers computed above
         quoted = [thousands(curves), str(pairs), pl(worst, 4), *(pl(v[2]) for v in bsd.values()),
@@ -546,7 +619,8 @@ if __name__ == "__main__":
                   thousands(shannon_min_gates(20)), thousands(nmax), pl(worst_ratio, 4),
                   pl(100 * sim["area_error"], 2), pl(sim["ratio_end"], 4), pl(sim["enstrophy_start"], 3),
                   pl(sim["enstrophy_end"], 3), pl(100 * sim["peak_rise"], 2), pl(100 * sim["mass_outside"], 2), pl(sim["sat_slope"], 3),
-                  pl(zeros[0], 3), pl(off_line, 3), pl(distance, 4)]
+                  pl(zeros[0], 3), pl(off_line, 3), pl(distance, 4),
+                  sci(arch), sci(one_prime), pl(no_pole), str(nzeros)]
         text = report.read_text(encoding="utf-8").replace("{,}", ",")  # LaTeX decimal comma
         missing = [q for q in quoted if q not in text]
         assert not missing, f"REPORT.md does not quote: {missing}"

@@ -1,14 +1,14 @@
-# Minimalne modele 7 problemów milenijnych: 3 modele, 7 propozycji, 14 sprawdzianów, 1 algorytm
+# Minimalne modele 7 problemów milenijnych: 3 modele, 7 propozycji, 15 sprawdzianów, 1 algorytm
 
 Maciej Szulia, maciej.szulia@gmail.com
 
-Raport opisuje stan z dnia 2026-11-13.
+Raport opisuje stan z dnia 2026-11-13. Sprawdzian 15, rysunek formy Weila i ogłoszenie dowodu z 2026-11-20 opisują stan z dnia 2026-11-20.
 
 **OSTRZEŻENIE:** Nie cytuj żadnej propozycji z raportu jako dowodu. Każda propozycja dla problemu otwartego ma brakujący krok, którego dowodu autor nie zna.
 
 ## Streszczenie
 
-Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 `[obliczenie: skrypt]`. 4 symulacje i 22 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
+Raport sprowadza 7 problemów milenijnych do 3 modeli. W modelu teza ma dowód z co najwyżej 4 wierszy albo sprawdzian liczbowy. Raport nie zawiera dowodu żadnego problemu otwartego: każda propozycja kończy się nazwanym brakującym krokiem. Algorytm 2 wątków szuka na przemian dowodu i kontrprzykładu. Wątek kontrprzykładów istnieje dla hipotezy Riemanna i nie znalazł naruszenia dla $n$ od 2 do 1 000 000 `[obliczenie: skrypt]`. Sprawdzian 15 liczy formę Weila, do której wchodzi tylko liczba pierwsza 2: na 20 funkcjach bazowych forma jest dodatnia `[obliczenie: skrypt]`. 4 symulacje i 23 rysunki pokazują modele w 2 wymiarach i w 3 wymiarach. System Lean 4 sprawdza 16 twierdzeń o rdzeniach dowodów. Program GNU Octave powtarza 3 obliczenia w języku MATLAB.
 
 ## Najkrótsze dowody
 
@@ -87,6 +87,8 @@ Legenda: znacznik `[obliczenie: skrypt]` oznacza liczbę, którą obliczył plik
 | Navier–Stokes | OpenAI ogłosił 2026-09-08 dowód wariantów (C) i (D): osobliwość przy gładkiej sile zewnętrznej. W październiku 2026 r. dowód czekał na niezależną weryfikację. Praca z 2026-10-06 podważa zgodność formalizacji w Lean z dowodem słownym. Pytanie o ruch bez siły nie ma dowodu. | `[źródło: sieć]` |
 | Yang–Mills | OpenAI ogłosił 2026-10-26 dowód istnienia teorii. Firma OpenAI powołała komitet 5 osób pod kierunkiem D. Grossa. Komitet opublikował 2026-11-10 objaśnienie dowodu i kod Lean firmy OpenAI. Komitet pisze, że nie rozumie jeszcze dowodu w pełni. Luka masowa nie ma dowodu. | `[źródło: sieć]` |
 | Riemann, Birch i Swinnerton-Dyer (BSD), Hodge, P a NP | Żaden z 4 problemów nie ma dowodu. | `[źródło: sieć]` |
+
+Dokument z 2026-11-20 ogłasza dowód hipotezy Riemanna i uogólnionej hipotezy Riemanna (GRH) z formalizacją w języku Lean `[źródło: alpo.ge/remark.pdf]`. Dokument nie zawiera dowodu słownego. Formalizacja ma 14 plików. Autor raportu nie sprawdził formalizacji `[obserwacja: 2026-11-20]`.
 
 Strona CMI oznacza 5 problemów statusem „Unsolved”, problem Naviera–Stokesa statusem „Active” i hipotezę Poincarégo statusem „Solved” `[źródło: sieć]`. Opis problemu Naviera–Stokesa uznaje za rozwiązanie dowód co najmniej 1 z 4 wariantów: (A), (B), (C), (D) `[źródło: Fefferman, opis problemu]`. Jeżeli dowód wariantu (C) przejdzie weryfikację, to opis problemu Naviera–Stokesa jest spełniony `[założenie]`.
 
@@ -199,7 +201,7 @@ Symulacja 12 przeszukuje losowe formuły 3-SAT metodą nawrotów. Mediana liczby
 
 ## 7 propozycji
 
-1. **Riemann (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Brakujący krok: zbuduj dla pierścienia liczb całkowitych odpowiednik powierzchni $E \times E$ z formą przecięcia i z odpowiednikiem krzywej $G$. Zdanie równoważne: forma Weila jest nieujemna `[źródło: Weil 1952]`. Pierwszy krok roboczy: udowodnij nieujemność formy Weila dla funkcji próbnych, których nośnik dopuszcza wkład dokładnie 1 liczby pierwszej `[założenie]`. Connes i Consani badają przypadek samego miejsca archimedesowego i podają konceptualne źródło dodatniości `[źródło: Connes, Consani 2021]`.
+1. **Riemann (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Brakujący krok: zbuduj dla pierścienia liczb całkowitych odpowiednik powierzchni $E \times E$ z formą przecięcia i z odpowiednikiem krzywej $G$. Zdanie równoważne: forma Weila jest nieujemna `[źródło: Weil 1952]`. Pierwszy krok roboczy: udowodnij nieujemność formy Weila dla funkcji próbnych, których nośnik dopuszcza wkład dokładnie 1 liczby pierwszej `[założenie]`. Preprint z 2026 r. podaje dowód komputerowy tego kroku `[źródło: Zhu 2026]`. Connes i Consani badają przypadek samego miejsca archimedesowego i podają konceptualne źródło dodatniości `[źródło: Connes, Consani 2021]`.
 2. **BSD (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Nad ciałem funkcyjnym hipoteza BSD jest równoważna skończoności grupy Tate'a–Szafarewicza `[źródło: Tate 1966; Kato, Trihan 2003]`. Nad ciałem $\mathbb{Q}$ równość rangi i krotności zera ma dowód dla krzywych z zerem o krotności co najwyżej 1 `[źródło: Gross, Zagier 1986; Koływagin 1990; Wiles, opis problemu]`. Dowód używa też twierdzenia o modularności. Wzór na współczynnik wiodący nie ma pełnego dowodu. Brakujący krok: skończoność grupy Tate'a–Szafarewicza dla krzywych o randze co najmniej 2. Pierwszy krok roboczy: udowodnij skończoność całej grupy dla krzywej 389a1.
 3. **Hodge (model 1).** Propozycja zakłada, że hipoteza jest prawdziwa `[założenie]`. Dowód dla klas typu $(1,1)$ używa ciągu wykładniczego snopów (dowód 2). Brakujący krok: konstrukcja podrozmaitości dla klasy typu $(k,k)$ przy $k \ge 2$, bo ciąg wykładniczy nie ma odpowiednika dla $k \ge 2$. Dowód MUSI używać współczynników wymiernych, bo wersja całkowita jest fałszywa `[źródło: Atiyah, Hirzebruch 1962]`. Dowód MUSI używać rzutowości: na rozmaitości Kählera klasy Cherna snopów koherentnych nie dają każdej klasy Hodge'a `[źródło: Voisin 2002]`. Pierwszy krok roboczy: rozmaitości abelowe wymiaru 6 `[założenie]`. Dla wymiaru co najwyżej 5 hipoteza wynika z preprintów bez potwierdzonej recenzji `[źródło: Markman 2025a, 2025b]`.
 4. **Yang–Mills (model 2).** Istnienie teorii ma ogłoszony dowód z 2026-10-26, więc raport nie dodaje propozycji dla istnienia. Na kracie przy silnym sprzężeniu luka masowa ma dowód `[założenie: Osterwalder, Seiler 1978, twierdzenie niesprawdzone w pracy]`. Brakujący krok: dolne ograniczenie odstępu $E_1 - E_0$, które pozostaje dodatnie, gdy bok pudła $L$ rośnie do nieskończoności. Metoda dowodu MUSI odróżniać grupę $SU(2)$ od grupy $U(1)$. Teoria $U(1)$ na kracie w 4 wymiarach ma fazę bez uwięzienia `[źródło: Guth 1980]`. Abelowe teorie z cechowaniem mają fazy bezmasowe `[źródło: Fröhlich, Spencer 1982]`. Pierwszy krok roboczy: luka masowa w modelu $O(3)$ w 2 wymiarach przy każdej wartości sprzężenia `[założenie]`.
@@ -213,7 +215,7 @@ Autor nie udowodnił żadnego brakującego kroku. Każdy wiersz podaje krok w po
 
 | Problem | Brakujący krok w postaci z 1 wzorem | Twierdzenie warunkowe | Przypadek na początek |
 |---|---|---|---|
-| Riemann | $\sigma(n) \le H_n + e^{H_n} \ln H_n$ dla każdego $n \ge 1$. | Krok jest równoważny hipotezie `[źródło: Lagarias 2002]`. | Nieujemność formy Weila dla nośnika z wkładem dokładnie 1 liczby pierwszej `[założenie]`. |
+| Riemann | $\sigma(n) \le H_n + e^{H_n} \ln H_n$ dla każdego $n \ge 1$. | Krok jest równoważny hipotezie `[źródło: Lagarias 2002]`. | Nieujemność formy Weila dla nośnika z wkładem dokładnie 1 liczby pierwszej. Preprint z 2026 r. podaje dowód komputerowy dla nośnika do $[-1{,}6; 1{,}6]$ `[źródło: Zhu 2026]`. |
 | BSD | Grupa Tate'a–Szafarewicza krzywej o randze co najmniej 2 jest skończona. | Nad ciałem funkcyjnym krok jest równoważny hipotezie `[źródło: Kato, Trihan 2003]`. Autor nie zna takiego twierdzenia nad ciałem $\mathbb{Q}$. | Krzywa 389a1: równość rangi i krotności zera ma dowód, a skończoność całej grupy nie ma dowodu `[źródło: LMFDB]`. |
 | Hodge | Każda wymierna klasa typu $(2,2)$ na rozmaitości rzutowej wymiaru 4 jest klasą cyklu. | Dla wymiaru co najwyżej 3 hipoteza wynika z dowodu 2 `[źródło: sieć]`. | Rozmaitości abelowe wymiaru 6 `[założenie]`. |
 | Yang–Mills | $\inf_L \left(E_1(L) - E_0(L)\right) \gt 0$. | Dla przekroju z 2 zmiennymi dowód 4 daje widmo dyskretne i $E_0 \ge 1{,}0188$. | Model $O(3)$ w 2 wymiarach. Preprint z 2026 r. bez recenzji sprawdza lukę komputerowo w 8 punktach sprzężenia `[źródło: Research Square]`. |
@@ -228,10 +230,26 @@ Każda lista dzieli 1 brakujący krok na etapy w kolejności wykonania. Autor ni
 ### Riemann: nieujemność formy Weila
 
 1. Zapisz hipotezę jako nierówność: forma Weila jest nieujemna dla każdej funkcji próbnej. Stan: równoważność ma dowód `[źródło: Weil 1952]`.
-2. Udowodnij nierówność dla funkcji próbnych, których nośnik dopuszcza tylko wkład miejsca archimedesowego. Stan: Connes i Consani badają ten przypadek `[źródło: Connes, Consani 2021]`.
-3. Udowodnij nierówność dla nośnika, który dopuszcza wkład dokładnie 1 liczby pierwszej. Stan: brak dowodu `[założenie]`.
-4. Udowodnij nierówność dla nośnika z wkładem $k$ liczb pierwszych, z oszacowaniem niezależnym od $k$. Stan: brak dowodu `[założenie]`.
+2. Udowodnij nierówność dla funkcji próbnych, których nośnik dopuszcza tylko wkład miejsca archimedesowego. Stan: dowód istnieje `[źródło: Yoshida 1992; Connes, Consani 2021]`. Sprawdzian 15 daje dla nośnika $[-\ln 2, \ln 2]$ najmniejszą wartość własną $3{,}22 \times 10^{-3}$ `[obliczenie: skrypt]`.
+3. Udowodnij nierówność dla nośnika, który dopuszcza wkład dokładnie 1 liczby pierwszej. Stan: dowód komputerowy w arytmetyce przedziałowej obejmuje nośnik $[-1{,}6; 1{,}6]$, a więc także nośnik $[-\ln 3, \ln 3]$ `[źródło: Zhu 2026, preprint bez potwierdzonej recenzji]`. Connes i Consani pokazali ten przypadek numerycznie `[źródło: Connes, Consani 2021b]`. Sprawdzian 15 powtarza obliczenie: dla nośnika $[-\ln 3, \ln 3]$ najmniejsza wartość własna wynosi $4{,}97 \times 10^{-7}$ `[obliczenie: skrypt]`. Do formy wchodzi wtedy tylko liczba 2.
+4. Udowodnij nierówność dla nośnika z wkładem $k$ liczb pierwszych, z oszacowaniem niezależnym od $k$. Stan: brak dowodu `[założenie]`. Zhu wykazuje przeszkodę: certyfikat dla nośnika $[-L, L]$ musi rozdzielić częstotliwości do $2\pi e^{A_L}$, gdzie $A_L \approx 4e^L$ `[źródło: Zhu 2026]`. Minimum formy maleje w tempie Landaua–Widoma `[źródło: Zhu 2026]`. Droga przez kolejne nośniki wymaga więc nowego pomysłu `[założenie]`. Gdy do formy wchodzi liczba 5, najmniejsza wartość własna na 20 funkcjach bazowych spada do wartości mniejszej niż $10^{-12}$ `[obliczenie: skrypt]`. Dla takiego nośnika 2 siatki kwadratury dają wartości różne o $3 \times 10^{-14}$, więc arytmetyka float64 nie rozstrzyga znaku wartości `[obliczenie: 600 i 900 węzłów, 2026-11-20]`.
 5. Przejdź do granicy $k \to \infty$. Etap 5 daje hipotezę Riemanna `[założenie]`.
+
+Sprawdzian 15 liczy formę Weila $W(g \ast \tilde{g})$ dla funkcji $g$ o nośniku w przedziale $[-L/2, L/2]$, gdzie $\tilde{g}(x) = \overline{g(-x)}$:
+
+$$W(f) = h(i/2) + h(-i/2) - f(0) \ln \pi + \frac{1}{2\pi} \int _{-\infty}^{\infty} h(r) \mathrm{Re} \psi(1/4 + ir/2) dr - \sum _{n \ge 2} \frac{\Lambda(n)}{\sqrt{n}} \left(f(\ln n) + f(-\ln n)\right)$$
+
+$h(r) = \int f(x) e^{irx} dx$ oznacza transformatę Fouriera funkcji $f$. $\psi$ oznacza funkcję digamma. $\Lambda(n)$ oznacza funkcję von Mangoldta: $\Lambda(p^k) = \ln p$ dla liczby pierwszej $p$, a $\Lambda(n) = 0$ dla każdej innej liczby $n$. Liczba $n$ wchodzi do formy, gdy $\Lambda(n) \gt 0$ i $\ln n \lt L$. Hipoteza Riemanna jest prawdziwa wtedy i tylko wtedy, gdy $W(g \ast \tilde{g}) \ge 0$ dla każdej funkcji $g$ `[źródło: Weil 1952]`.
+
+Sprawdzian 15 zapisuje funkcję $g$ jako sumę 20 funkcji bazowych $(1 - (x/a)^2)^6 P_j(x/a)$, gdzie $a = L/2$, a $P_j$ oznacza wielomian Legendre'a stopnia $j$. Forma na tych funkcjach jest macierzą $20 \times 20$. Najmniejsza wartość własna oznacza najmniejszą wartość $W(g \ast \tilde{g})$ dla funkcji $g$ z bazy o normie $\lVert g \rVert_2 = 1$.
+
+Sprawdzian 15 liczy wartość dla $L = \ln 3$ także drugą drogą: sumuje $\lvert \hat{g}(\gamma) \rvert^2$ po 38 zerach $1/2 + i\gamma$ funkcji $\zeta$ z przedziału $0 \lt \gamma \lt 120$. Obie drogi różnią się o 0,07 % `[obliczenie: skrypt]`. Bez członu $h(i/2) + h(-i/2)$, który pochodzi z bieguna funkcji $\zeta$, najmniejsza wartość własna wynosi −2,02 `[obliczenie: skrypt]`. Dodatniość formy zależy więc od bieguna.
+
+Sprawdzian nie zastępuje dowodu etapu 3. Najmniejsza wartość własna maleje, gdy liczba funkcji bazowych rośnie z 12 do 20 `[obliczenie: skrypt]`. Dowód MUSI objąć każdą funkcję $g$, a nie tylko funkcje z bazy.
+
+![Najmniejsza wartość własna formy Weila w zależności od długości nośnika L, w skali logarytmicznej, dla 12 i 20 funkcji bazowych. Wartość spada z 3,22 × 10⁻³ dla L = ln 2 do 4,97 × 10⁻⁷ dla L = ln 3 i do wartości mniejszej niż 10⁻¹² po wejściu liczby 5.](figures/riemann-weil-positivity.png)
+
+Dokument z 2026-11-20 opisuje inną drogę do etapu 5: łańcuch theta liftów o długości $\sqrt{X}$ zastępuje krotność z metody Stepanova `[źródło: alpo.ge/remark.pdf]`.
 
 ### BSD: skończoność grupy Tate'a–Szafarewicza krzywej 389a1
 
@@ -333,6 +351,7 @@ Każdy wiersz tabeli ma znacznik `[obliczenie: skrypt]`. Sprawdziany od 9 do 12 
 | 12 | 3 | Przeszukiwanie z nawrotami, 25 losowych formuł 3-SAT na rozmiar | mediana węzłów od 6 do 87; nachylenie 0,118 bitu na zmienną |
 | 13 | 1 | Zera funkcji $\zeta$ na prostej $\sigma = 1/2$ dla $t \lt 40$ | 6 zer; pierwsze zero $t$ = 14,135; najmniejsza wartość $\lvert\zeta\rvert$ na prostych $\sigma = 0{,}25$ i $\sigma = 0{,}75$: 0,179 |
 | 14 | 1 | Rozkład 9 590 wartości $a/(2\sqrt{p})$ krzywej 37a1 | różnica dystrybuant względem rozkładu półokręgu: 0,0066 |
+| 15 | 1 | Forma Weila na 20 funkcjach bazowych dla $L = \ln 2$ (bez liczb pierwszych) i $L = \ln 3$ (tylko liczba 2) | najmniejsza wartość własna: $3{,}22 \times 10^{-3}$ oraz $4{,}97 \times 10^{-7}$; ta sama wartość z 38 zer funkcji $\zeta$ z różnicą 0,07 %; bez członu biegunowego: −2,02 |
 
 Sprawdzian 4 używa 4 krzywych: 11a3, 37a1, 389a1, 5077a1. Hipoteza BSD przewiduje nachylenie równe randze. Wzrost iloczynu jak $(\ln X)^r$ jest hipotezą, która implikuje hipotezę Riemanna dla funkcji $L(E, s)$ `[źródło: Goldfeld 1982; Kuo, Murty 2005]`. Sprawdziany 1 i 2 są równoważne: sygnatura $(1, 3)$ zachodzi wtedy i tylko wtedy, gdy $a^2 \lt 4p$. Wartość $E_0$ = 1,10822 zgadza się z wartością $1{,}10822315759$ z literatury `[źródło: Fernández, García 2014]`.
 
@@ -409,7 +428,7 @@ Każdy punkt jest propozycją zastosowania, bez wdrożenia.
 1. Kryptografia krzywych eliptycznych: dobór krzywej wymaga liczby punktów $N$ i granicy $a^2 \le 4p$. Sprawdzian 1 liczy obie wielkości `[założenie]`.
 2. Kryptografia z kluczem publicznym zakłada zdanie $P \ne NP$ `[założenie]`. Model zapytań pokazuje metody dowodu, które nie rozstrzygają zdania $P \ne NP$.
 3. Nauczanie: 1 problem dostaje co najmniej 2 rysunki i 1 dowód z co najwyżej 4 wierszy.
-4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 24 liczby z raportem i kończy pracę błędem przy różnicy.
+4. Test regresji bibliotek liczbowych: skrypt `models_check.py` porównuje 28 liczb z raportem i kończy pracę błędem przy różnicy.
 5. Symulacje przepływów: liczba $\mathrm{Re}_n$ wskazuje skalę, na której siatka obliczeniowa wymaga zagęszczenia `[założenie]`.
 6. Metody wariacyjne w fizyce: hamiltonian $-\Delta + x^2y^2$ daje poziom $E_0$ z 5 cyframi oraz granicę dolną do porównań `[obliczenie: skrypt]`.
 7. Sprawdzanie dowodów: wątek dowodów jest programem, który sprawdza dowody. Formalizacje z 2026 r. używają systemu Lean `[źródło: sieć]`. Repozytorium zawiera 16 twierdzeń w Lean.
@@ -453,16 +472,16 @@ Wykonaj każdy krok w tej kolejności:
 1. Utwórz środowisko: `python3 -m venv .venv`.
 2. Zainstaluj biblioteki: `.venv/bin/pip install -r requirements.txt`.
 3. Uruchom sprawdziany: `.venv/bin/python models_check.py`. Wynik: skrypt wypisuje wiersz `all checks passed`.
-4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 14 plików PNG z tego skryptu.
+4. Narysuj rysunki: `.venv/bin/python figures.py`. Wynik: katalog `figures` zawiera 15 plików PNG z tego skryptu.
 5. Narysuj animacje: `.venv/bin/python animations.py`. Wynik: katalog `figures` zawiera 3 pliki GIF i 1 plik PNG z tego skryptu.
 6. Zbuduj stronę interaktywną: `.venv/bin/python interactive.py`. Wynik: plik `docs/index.html`.
 7. Sprawdź dowody w Lean. W katalogu `lean` wykonaj `lake exe cache get`, a potem `lake build`. Wynik: wiersz `Build completed successfully`.
 8. Narysuj rysunek z Lean. W katalogu `lean` wykonaj `lake exe figure > ../figures/lean-hasse-bound.svg`.
 9. Uruchom symulacje w GNU Octave: `docker run --rm -v "$PWD":/work -w /work gnuoctave/octave:11.3.0 octave-cli matlab/run_all.m`. Wynik: wiersz `all octave checks passed`.
 
-Skrypt `models_check.py` porównuje 24 liczby z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
+Skrypt `models_check.py` porównuje 28 liczb z raportu z obliczeniem. Jeżeli raport podaje inną liczbę niż obliczenie, to skrypt kończy pracę błędem.
 
-Czasy pracy 4 skryptów: `models_check.py` 23 s, `figures.py` 27 s, `animations.py` 66 s, `interactive.py` 24 s `[pomiar: 1 przebieg, 2026-11-13, laptop autora z 8 wątkami procesora]`.
+Czasy pracy 4 skryptów: `models_check.py` 26 s i `figures.py` 46 s `[pomiar: 1 przebieg, 2026-11-20, laptop autora z 8 wątkami procesora]`; `animations.py` 66 s i `interactive.py` 24 s `[pomiar: 1 przebieg, 2026-11-13, laptop autora z 8 wątkami procesora]`.
 
 ## Decyzje i braki
 
@@ -494,6 +513,7 @@ Plik [references-check.md](references-check.md) podaje dla pozycji z 2026-11-13 
 - Birch, B., Swinnerton-Dyer, H. P. F. (1965). Notes on elliptic curves. II. Journal für die reine und angewandte Mathematik 218.
 - Buhrman, H., de Wolf, R. (2002). Complexity measures and decision tree complexity: a survey. Theoretical Computer Science 288 (nowa).
 - Connes, A., Consani, C. (2021). Weil positivity and trace formula, the archimedean place. Selecta Mathematica 27.
+- Connes, A., Consani, C. (2021b). Spectral triples and zeta-cycles. arXiv:2106.01715 (nowa).
 - Escauriaza, L., Seregin, G., Šverák, V. (2003). $L_{3,\infty}$-solutions of the Navier–Stokes equations and backward uniqueness. Russian Mathematical Surveys 58.
 - Fefferman, C. Existence and smoothness of the Navier–Stokes equation. Opis problemu, Clay Mathematics Institute.
 - Fernández, F., García, J. (2014). Eigenvalues and eigenfunctions of the anharmonic oscillator $V(x,y) = x^2y^2$. Open Physics 12 (nowa).
@@ -541,10 +561,12 @@ Plik [references-check.md](references-check.md) podaje dla pozycji z 2026-11-13 
 - Weil, A. (1952). Sur les « formules explicites » de la théorie des nombres premiers. Communications du Séminaire Mathématique de l'Université de Lund.
 - Wiles, A. The Birch and Swinnerton-Dyer conjecture. Opis problemu, Clay Mathematics Institute (nowa).
 - Williams, R. (2011). Non-uniform ACC circuit lower bounds. IEEE Conference on Computational Complexity 2011.
+- Yoshida, H. (1992). On Hermitian forms attached to zeta functions. Advanced Studies in Pure Mathematics 21 (nowa).
+- Zhu, X. (2026). Weil positivity in compact windows: a finite reduction, certified two-sided bounds, and a Landau-Widom decay law. arXiv:2608.24827 (nowa).
 
 ## Źródła z sieci
 
-Sekcja zawiera 10 stron. Sprawdzenie z 2026-11-13 otworzyło 8 stron. Strona OpenAI wymaga JavaScriptu, więc raport cytuje stronę OpenAI za 2 innymi serwisami. Sprawdzenie nie otworzyło strony arXiv:2610.08144: raport zna tę pracę z przypisu Wikipedii.
+Sekcja zawiera 11 stron. Sprawdzenie z 2026-11-13 otworzyło 8 stron. Autor raportu otworzył dokument alpo.ge/remark.pdf 2026-11-20. Strona OpenAI wymaga JavaScriptu, więc raport cytuje stronę OpenAI za 2 innymi serwisami. Sprawdzenie nie otworzyło strony arXiv:2610.08144: raport zna tę pracę z przypisu Wikipedii.
 
 - [Millennium Prize Problems (Wikipedia)](https://en.wikipedia.org/wiki/Millennium_Prize_Problems)
 - [Millennium Problems (Clay Mathematics Institute)](https://www.claymath.org/millennium-problems/)
@@ -556,3 +578,4 @@ Sekcja zawiera 10 stron. Sprawdzenie z 2026-11-13 otworzyło 8 stron. Strona Ope
 - [Yang–Mills existence and mass gap (Wikipedia)](https://en.wikipedia.org/wiki/Yang%E2%80%93Mills_existence_and_mass_gap)
 - [Hodge conjecture (Wikipedia)](https://en.wikipedia.org/wiki/Hodge_conjecture)
 - [Has AI solved a Millennium Prize Problem? (Papex)](https://papex.org/blog/has-ai-solved-a-millennium-prize-problem)
+- [Ogłoszenie dowodu hipotezy Riemanna i GRH z formalizacją w Lean, 2026-11-20 (alpo.ge/remark.pdf)](https://alpo.ge/remark.pdf)
