@@ -59,7 +59,7 @@ Druga droga do nierówności $a^2 \le 4p$: metoda Stepanova. Wielomian $F$ ma ze
 
 ![Rząd zera wielomianu Stepanova F w każdym punkcie x ciała o 101 elementach. Każdy z 49 punktów zbioru S ma zero rzędu co najmniej 8, punkty poza zbiorem S mają zero rzędu 0 albo 1.](figures/riemann-stepanov-multiplicity.png)
 
-Etap 3 brakującego kroku: forma Weila jest nieujemna, gdy do formy wchodzi tylko liczba 2. Sprawdzian 15 nie zastępuje dowodu, bo obejmuje tylko 20 funkcji bazowych.
+Etap 3 brakującego kroku: forma Weila jest nieujemna, gdy do formy wchodzi tylko liczba 2. Sprawdzian 15 nie zastępuje dowodu, bo obejmuje tylko 20 funkcji bazowych. Dowód komputerowy etapu 3 podaje preprint X. Zhu z 2026 r. ([arXiv:2608.24827](https://arxiv.org/abs/2608.24827)).
 
 ![Najmniejsza wartość własna formy Weila w zależności od długości nośnika L, w skali logarytmicznej, dla 12 i 20 funkcji bazowych. Wartość spada z 3,22 × 10⁻³ dla L = ln 2 do 4,97 × 10⁻⁷ dla L = ln 3 i do wartości mniejszej niż 10⁻¹² po wejściu liczby 5.](figures/riemann-weil-positivity.png)
 
