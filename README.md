@@ -163,3 +163,7 @@ Czasy pracy 4 skryptów: `models_check.py` 26 s i `figures.py` 46 s (pomiar: 1 p
 - Autor nie uruchomił plików z katalogu `matlab` w programie MATLAB.
 - Sprawdzenie odsyłaczy z 2026-11-13 objęło tekst 4 prac i abstrakty 5 prac. 26 twierdzeń ma potwierdzenie tylko w źródle wtórnym, a 4 twierdzenia nie mają potwierdzenia.
 - Pełną listę zawiera sekcja „Problematyka” w pliku [REPORT.md](REPORT.md).
+
+## Documentation
+
+- [Dokumentacja architektury (arc42, diagramy Mermaid, ADR)](docs/architecture/README.md)
